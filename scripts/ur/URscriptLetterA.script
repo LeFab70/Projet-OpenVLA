@@ -1,0 +1,75 @@
+def trace_A(numberOfLetter):
+
+  if (numberOfLetter < 1) or (numberOfLetter>4):
+    popup("Le nombre de lettre A doit etre entre 1 et 4 pour des raisons de sécurité")
+    halt# sortir du script
+  end
+  # Configuration
+  set_tcp(p[0, 0, 0, 0, 0, 0])
+  set_payload(1.0)
+
+  # Paramètres de mouvement
+  vitesse = 0.1        # m/s
+  acceleration = 0.5   # m/s²
+  blend = 0.005        # rayon de lissage (m)
+
+  # Point de départ (base du A, côté gauche)
+  base_x = 0.4
+  base_y = -0.3
+  base_z = 0.3
+
+  # Dimensions du A
+  hauteur = 0.15       # 15 cm de haut
+  largeur = 0.10       # 10 cm de large
+
+  # Orientation fixe (outil vers le bas)
+  rx = 3.14159
+  ry = 0
+  rz = 0
+
+#--- Boucle de repetition ----
+initialValue=0
+
+while initialValue < numberOfLetter:
+  #decalage auto axe Y pour chaque nouvelle lettre
+  decalage_y=initialValue * 0.15
+  current_base_y=base_y +decalage_y
+  # Position d'approche (au-dessus du point de départ)
+  p_approche = p[base_x, current_base_y, base_z + 0.05, rx, ry, rz]
+
+  # Points du A
+  p1 = p[base_x, current_base_y, base_z, rx, ry, rz]                              # Bas gauche
+  p2 = p[base_x + largeur/2, current_base_y, base_z + hauteur, rx, ry, rz]        # Sommet
+  p3 = p[base_x + largeur, current_base_y, base_z, rx, ry, rz]                    # Bas droite
+  p4 = p[base_x + largeur*0.75, current_base_y, base_z + hauteur*0.4, rx, ry, rz] # Barre droite
+  p5 = p[base_x + largeur*0.25, current_base_y, base_z + hauteur*0.4, rx, ry, rz] # Barre gauche
+
+  # Exécution du tracé
+  # Approche
+  movej(p_approche, a=1.0, v=0.5)
+
+  # Trait gauche du A (bas gauche → sommet)
+  movel(p1, a=acceleration, v=vitesse)
+  movel(p2, a=acceleration, v=vitesse, r=blend)
+
+  # Trait droit du A (sommet → bas droite)
+  movel(p3, a=acceleration, v=vitesse)
+
+  # Lever l'outil pour repositionner
+  movel(pose_trans(p3, p[0, 0, 0.02, 0, 0, 0]), a=acceleration, v=vitesse)
+  movel(pose_trans(p4, p[0, 0, 0.02, 0, 0, 0]), a=acceleration, v=vitesse)
+
+  # Barre horizontale du A
+  movel(p4, a=acceleration, v=vitesse)
+  movel(p5, a=acceleration, v=vitesse)
+
+  # Retour en position d'approche
+  movel(pose_trans(p5, p[0, 0, 0.05, 0, 0, 0]), a=acceleration, v=vitesse)
+  movej(p_approche, a=1.0, v=0.5)
+  initialValue++
+end
+textmsg("Tracé terminé "+ to_str(numberOfLetter) + " lettres.")
+end
+# Lancer le programme
+#trace_A(1)
+trace_A(3)

@@ -23,3 +23,22 @@ Le projet visera en particulier à répondre à la question suivante : quels son
 - Effectuer des essais, analyser les résultats obtenus et documenter les limites, défis et opportunités de l’approche.
 - Produire une documentation technique et une synthèse vulgarisée destinée à l’équipe de CCNB-INNOV.
 - Présenter les résultats du stage sous forme de démonstration et de présentation technique.
+
+---
+
+## Jour 02 — Robot UR (tracé lettre A)
+
+**Date :** 14 mai 2026
+
+Premier programme URScript sur le bras collaboratif : tracé géométrique de la lettre **A** avec déplacement linéaire (`movel`), approche sécurisée et paramètres de vitesse/accélération.
+
+- Script : `scripts/ur/URscriptLetterA.script` — fonction `trace_A(n)` pour tracer 1 à 4 lettres (décalage automatique sur Y).
+- Rapport : `OpenVLA_day02_trace_A.docx` — objectifs, code de référence et notes de sécurité.
+
+**Fichiers du dépôt**
+
+| Fichier | Description |
+|---------|-------------|
+| `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA (architecture, flux de données) |
+| `OpenVLA_day02_trace_A.docx` | Journal jour 02 — intégration UR |
+| `scripts/ur/URscriptLetterA.script` | Programme UR — tracé du A |
