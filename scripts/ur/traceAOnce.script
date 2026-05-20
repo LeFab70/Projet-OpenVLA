@@ -1,0 +1,31 @@
+def traceAOnce():
+  set_tcp(p[0, 0, 0, 0, 0, 0])
+  set_payload(1.0)
+  bx = 0.4
+  by = -0.3
+  bz = 0.3
+  w = 0.10
+  h = 0.15
+  v = 0.1
+  acc = 0.5
+  lift = 0.02
+  rx = 3.14159
+  p1 = p[bx, by, bz, rx, 0, 0]
+  p2 = p[bx + w / 2, by, bz + h, rx, 0, 0]
+  p3 = p[bx + w, by, bz, rx, 0, 0]
+  zb = bz + h * 0.45
+  p4 = p[bx + w * 0.72, by, zb, rx, 0, 0]
+  p5 = p[bx + w * 0.28, by, zb, rx, 0, 0]
+  pa = p[bx, by, bz + lift, rx, 0, 0]
+  movej(pa, a=1.0, v=0.5)
+  movel(p1, a=acc, v=v)
+  movel(p2, a=acc, v=v)
+  movel(p3, a=acc, v=v)
+  movel(pose_trans(p4, p[0, 0, lift, 0, 0, 0]), a=acc, v=v)
+  movel(p4, a=acc, v=v)
+  movel(p5, a=acc, v=v)
+  movel(pose_trans(p5, p[0, 0, lift, 0, 0, 0]), a=acc, v=v)
+  movej(pa, a=1.0, v=0.5)
+end
+
+traceAOnce()
