@@ -33,7 +33,17 @@ Le projet visera en particulier à répondre à la question suivante : quels son
 Premier programme URScript sur le bras collaboratif : tracé géométrique de la lettre **A** avec déplacement linéaire (`movel`), approche sécurisée et paramètres de vitesse/accélération.
 
 - Script : `scripts/ur/URscriptLetterA.script` — fonction `trace_A(n)` pour tracer 1 à 4 lettres (décalage automatique sur Y).
+- Script : `scripts/ur/traceAOnce.script` — un seul A, sans boucle.
+- Script : `scripts/ur/returnToCenter.script` — retour position centre table.
 - Rapport : `OpenVLA_day02_trace_A.docx` — objectifs, code de référence et notes de sécurité.
+
+## Jour 03 — API Zivid (MR130)
+
+**Date :** 14 mai 2026
+
+Prise en main de l’API Zivid : connexion à la caméra **Zivid 2+ MR130** et envoi d’une commande d’acquisition 2D/3D (`capture_2d_3d`).
+
+- Rapport : `OpenVLA_day03_zivid_api.docx` — prérequis SDK, étapes API Python, exemple d’acquisition, lien vers OpenVLA.
 
 **Fichiers du dépôt**
 
@@ -41,4 +51,7 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 |---------|-------------|
 | `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA (architecture, flux de données) |
 | `OpenVLA_day02_trace_A.docx` | Journal jour 02 — intégration UR |
-| `scripts/ur/URscriptLetterA.script` | Programme UR — tracé du A |
+| `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid MR130 |
+| `scripts/ur/URscriptLetterA.script` | Programme UR — tracé du A (boucle) |
+| `scripts/ur/traceAOnce.script` | Programme UR — tracé d’un seul A |
+| `scripts/ur/returnToCenter.script` | Programme UR — retour au centre |
