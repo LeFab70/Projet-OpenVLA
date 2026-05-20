@@ -1,0 +1,22 @@
+# Python
+*.py
+__pycache__/
+*.pyc
+*.pyo
+
+# Environnement virtuel
+.venv/
+.eenv/
+venv/
+env/
+
+# Assets locaux (images, schémas)
+assets/
+
+# MATLAB / cache matplotlib
+*.mat
+.matplotlib_cache/
+
+# Fichiers temporaires Word / Office
+~$*
+.DS_Store
