@@ -1,7 +1,7 @@
 # openVLA
 
 **Programmeur :** Fabrice Kouonang  
-**Date :** 14 mai 2026
+**Début du stage :** 14 mai 2026
 
 ---
 
@@ -26,9 +26,17 @@ Le projet visera en particulier à répondre à la question suivante : quels son
 
 ---
 
-## Jour 02 — Robot UR (tracé lettre A)
+## Jour 01 — Prise en main OpenVLA
 
 **Date :** 14 mai 2026
+
+Veille et documentation : architecture OpenVLA, flux de données, comparaison aux approches robotiques classiques.
+
+- Rapport : `OpenVLA_prise_en_main.docx`
+
+## Jour 02 — Robot UR (tracé lettre A)
+
+**Date :** 19 mai 2026
 
 Premier programme URScript sur le bras collaboratif : tracé géométrique de la lettre **A** avec déplacement linéaire (`movel`), approche sécurisée et paramètres de vitesse/accélération.
 
@@ -39,7 +47,7 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 
 ## Jour 03 — API Zivid (MR130)
 
-**Date :** 14 mai 2026
+**Date :** 20 mai 2026
 
 Prise en main de l’API Zivid : connexion à la caméra **Zivid 2+ MR130** et envoi d’une commande d’acquisition 2D/3D (`capture_2d_3d`).
 
