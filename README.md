@@ -45,13 +45,42 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 - Script : `scripts/ur/returnToCenter.script` — retour position centre table.
 - Rapport : `OpenVLA_day02_trace_A.docx` — objectifs, code de référence et notes de sécurité.
 
-## Jour 03 — API Zivid (MR130)
+## Jour 03 — API Zivid + Conda (MR130)
 
 **Date :** 20 mai 2026
 
-Prise en main de l’API Zivid : connexion à la caméra **Zivid 2+ MR130** et envoi d’une commande d’acquisition 2D/3D (`capture_2d_3d`).
+- **Zivid** : connexion caméra **Zivid 2+ MR130**, acquisition 2D/3D (`capture_2d_3d`).
+- **Conda** : trois environnements Python 3.10 — `env_zivid`, `env_ur`, `env_integration`.
 
-- Rapport : `OpenVLA_day03_zivid_api.docx` — prérequis SDK, étapes API Python, exemple d’acquisition, lien vers OpenVLA.
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day03_zivid_api.docx` | API Zivid, exemple d’acquisition |
+| `OpenVLA_day03_conda_anaconda.docx` | Guide Conda/Anaconda, arborescence, commandes |
+
+### Environnements Conda (Python 3.10)
+
+| Environnement | Usage | Installation |
+|---------------|-------|--------------|
+| `env_zivid` | Caméra seule | `pip install zivid numpy opencv-python` |
+| `env_ur` | Robot seul | `pip install ur-rtde` |
+| `env_integration` | Zivid + UR | `pip install zivid ur-rtde numpy opencv-python` |
+
+```bash
+conda create --name env_zivid python=3.10 -y && conda activate env_zivid
+conda create --name env_ur python=3.10 -y && conda activate env_ur
+conda create --name env_integration python=3.10 -y && conda activate env_integration
+```
+
+### Arborescence `scripts/`
+
+```
+scripts/
+├── test_zivid/test_camera.py
+├── ur/                    (*.script UR + test_robot.py)
+└── globalTest/zivid_ur_robot_integration.py
+```
+
+Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont versionnés sur Git.
 
 **Fichiers du dépôt**
 
@@ -60,6 +89,7 @@ Prise en main de l’API Zivid : connexion à la caméra **Zivid 2+ MR130** et e
 | `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA (architecture, flux de données) |
 | `OpenVLA_day02_trace_A.docx` | Journal jour 02 — intégration UR |
 | `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid MR130 |
+| `OpenVLA_day03_conda_anaconda.docx` | Journal jour 03 — Conda / Anaconda |
 | `scripts/ur/URscriptLetterA.script` | Programme UR — tracé du A (boucle) |
 | `scripts/ur/traceAOnce.script` | Programme UR — tracé d’un seul A |
 | `scripts/ur/returnToCenter.script` | Programme UR — retour au centre |
