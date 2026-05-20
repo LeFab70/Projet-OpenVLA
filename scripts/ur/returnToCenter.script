@@ -1,0 +1,16 @@
+def ReturnToCenter():
+  # Position de référence (centre de la table)
+  bx = 0.0
+  by = 0.0
+  bz = 0.15
+  rx = 3.14159
+  ry = 0.0
+  rz = 0.0
+
+  # Vitesse et accélération sûres
+  v = 0.15
+  acc = 0.3
+
+  # Mouvement vers le centre
+  movej(p[bx, by, bz, rx, ry, rz], a=acc, v=v)
+end
