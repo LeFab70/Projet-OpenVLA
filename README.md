@@ -62,7 +62,7 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 **Date :** 21 mai 2026
 
 - **Caméra** : test de capture réussi avec la Zivid 2+ MR130 (images 2D/3D, nuage de points).
-- **OpenVLA** : début de la mise en place de l’environnement d’inférence (GPU, PyTorch, dépôt openvla).
+- **OpenVLA** : début de la mise en place de l’environnement d’inférence sur **Windows 11 Pro** (GPU NVIDIA, PyTorch, dépôt openvla).
 - **Intégration** : schéma de communication Python — Zivid (SDK) + UR (ur-rtde) orchestrés par un script central.
 
 | Rapport | Contenu |
@@ -76,7 +76,7 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 | `env_zivid` | Caméra seule | `pip install zivid numpy opencv-python` |
 | `env_ur` | Robot seul | `pip install ur-rtde` |
 | `env_integration` | Zivid + UR | `pip install zivid ur-rtde numpy opencv-python` |
-| `env_openvla` | Inférence OpenVLA | PyTorch CUDA + dépôt [openvla](https://github.com/openvla/openvla) (poste Linux + GPU) |
+| `env_openvla` | Inférence OpenVLA | Windows 11 Pro — Anaconda, PyTorch CUDA + dépôt [openvla](https://github.com/openvla/openvla) |
 
 ```bash
 conda create --name env_zivid python=3.10 -y && conda activate env_zivid
