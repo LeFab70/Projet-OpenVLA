@@ -32,7 +32,8 @@ Le projet visera en particulier à répondre à la question suivante : quels son
 
 Veille et documentation : architecture OpenVLA, flux de données, comparaison aux approches robotiques classiques.
 
-- Rapport : `OpenVLA_prise_en_main.docx`
+- Rapport : `OpenVLA_prise_en_main.docx` — inclut l’installation **openvla-7b** sous **Windows 11 Pro** (Conda Python 3.11, PyTorch CUDA, Hugging Face, tests GPU).
+- Notes d’installation détaillées : `scripts/utils.txt`
 
 ## Jour 02 — Robot UR (tracé lettre A)
 
@@ -86,7 +87,20 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 | `env_zivid` | Caméra seule | `pip install zivid numpy opencv-python` |
 | `env_ur` | Robot seul | `pip install ur-rtde` |
 | `env_integration` | Zivid + UR | `pip install zivid ur-rtde numpy opencv-python` |
-| `env_openvla` | Inférence OpenVLA | Windows 11 Pro — `pip install transformers torch pillow zivid numpy` |
+| `env_openvla` | Inférence OpenVLA | Windows 11 Pro — voir `OpenVLA_prise_en_main.docx` et `scripts/utils.txt` |
+
+**Installation openvla-7b (Windows 11 Pro, Python 3.11)**
+
+```bash
+conda create -n env_openvla python=3.11 -y && conda activate env_openvla
+conda install -c conda-forge cmake -y
+pip install numpy opencv-python scipy pillow ur_rtde zivid huggingface_hub accelerate
+pip install transformers==4.40.1
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+hf auth login
+huggingface-cli download openvla/openvla-7b --local-dir C:\Users\Etudiant\models\openvla-7b
+python scripts/integration/test/test_openvla.py
+```
 
 ```bash
 conda create --name env_zivid python=3.11 -y && conda activate env_zivid
@@ -115,7 +129,7 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
-| `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA (architecture, flux de données) |
+| `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA + installation openvla-7b (Windows 11 Pro) |
 | `OpenVLA_day02_trace_A.docx` | Journal jour 02 — intégration UR |
 | `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid MR130 |
 | `OpenVLA_day03_conda_anaconda.docx` | Journal jour 03 — Conda / Anaconda |
