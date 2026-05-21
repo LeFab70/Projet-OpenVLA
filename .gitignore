@@ -1,5 +1,5 @@
 # Python
-*.py
+
 __pycache__/
 *.pyc
 *.pyo
@@ -12,6 +12,7 @@ env/
 
 # Assets locaux (images, schémas)
 assets/
+*.png
 
 # MATLAB / cache matplotlib
 *.mat
