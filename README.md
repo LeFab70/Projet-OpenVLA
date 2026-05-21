@@ -39,12 +39,19 @@ Veille et documentation : architecture OpenVLA, flux de données, comparaison au
 
 **Date :** 19 mai 2026
 
-Premier programme URScript sur le bras collaboratif : tracé géométrique de la lettre **A** avec déplacement linéaire (`movel`), approche sécurisée et paramètres de vitesse/accélération.
+Premier programme URScript sur le bras collaboratif : tracé géométrique de la lettre **A** avec `movej` (approche / retrait) et `movel` (traits linéaires).
 
-- Script : `scripts/ur/URscriptLetterA.script` — fonction `trace_A(n)` pour tracer 1 à 4 lettres (décalage automatique sur Y).
-- Script : `scripts/ur/traceAOnce.script` — un seul A, sans boucle.
-- Script : `scripts/ur/returnToCenter.script` — retour position centre table.
-- Rapport : `OpenVLA_day02_trace_A.docx` — objectifs, code de référence et notes de sécurité.
+**Étapes essentielles :** préparer TCP → définir 5 poses du A → approche (`movej`) → tracer (`movel`) → retour sécurité → répéter si besoin (`trace_A(n)`).
+
+Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** (PolyScope), pose par pose, sans script complet.
+
+| Script UR (`.script`) | Description |
+|-----------------------|-------------|
+| `scripts/ur/URscriptLetterA.script` | Fonction `trace_A(n)` — 1 à 4 lettres (décalage Y) |
+| `scripts/ur/traceAOnce.script` | Un seul A, sans boucle |
+| `scripts/ur/returnToCenter.script` | Retour au centre de la table |
+
+- Rapport : `OpenVLA_day02_trace_A.docx` — étapes, script de référence, exécution directe movej/movel
 
 ## Jour 03 — API Zivid + Conda (MR130)
 
@@ -130,7 +137,7 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
 | `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA + installation openvla-7b (Windows 11 Pro) |
-| `OpenVLA_day02_trace_A.docx` | Journal jour 02 — intégration UR |
+| `OpenVLA_day02_trace_A.docx` | Journal jour 02 — tracé A, movej/movel, exécution directe |
 | `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid MR130 |
 | `OpenVLA_day03_conda_anaconda.docx` | Journal jour 03 — Conda / Anaconda |
 | `OpenVLA_day04_openvla_integration.docx` | Journal jour 04 — OpenVLA et intégration Zivid/UR |
