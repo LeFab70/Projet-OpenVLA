@@ -13,6 +13,8 @@ env/
 # Assets locaux (images, schémas)
 assets/
 *.png
+*.zdf
+*.ply
 
 # MATLAB / cache matplotlib
 *.mat
