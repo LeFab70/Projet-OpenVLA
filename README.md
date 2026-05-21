@@ -57,6 +57,18 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 | `OpenVLA_day03_zivid_api.docx` | API Zivid, exemple d’acquisition |
 | `OpenVLA_day03_conda_anaconda.docx` | Guide Conda/Anaconda, arborescence, commandes |
 
+## Jour 04 — OpenVLA + intégration Zivid / UR
+
+**Date :** 21 mai 2026
+
+- **Caméra** : test de capture réussi avec la Zivid 2+ MR130 (images 2D/3D, nuage de points).
+- **OpenVLA** : début de la mise en place de l’environnement d’inférence (GPU, PyTorch, dépôt openvla).
+- **Intégration** : schéma de communication Python — Zivid (SDK) + UR (ur-rtde) orchestrés par un script central.
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day04_openvla_integration.docx` | Environnement OpenVLA, intégration UR ↔ Zivid (version initiale) |
+
 ### Environnements Conda (Python 3.10)
 
 | Environnement | Usage | Installation |
@@ -64,20 +76,22 @@ Premier programme URScript sur le bras collaboratif : tracé géométrique de la
 | `env_zivid` | Caméra seule | `pip install zivid numpy opencv-python` |
 | `env_ur` | Robot seul | `pip install ur-rtde` |
 | `env_integration` | Zivid + UR | `pip install zivid ur-rtde numpy opencv-python` |
+| `env_openvla` | Inférence OpenVLA | PyTorch CUDA + dépôt [openvla](https://github.com/openvla/openvla) (poste Linux + GPU) |
 
 ```bash
 conda create --name env_zivid python=3.10 -y && conda activate env_zivid
 conda create --name env_ur python=3.10 -y && conda activate env_ur
 conda create --name env_integration python=3.10 -y && conda activate env_integration
+conda create --name env_openvla python=3.10 -y && conda activate env_openvla
 ```
 
 ### Arborescence `scripts/`
 
 ```
 scripts/
-├── test_zivid/test_camera.py
-├── ur/                    (*.script UR + test_robot.py)
-└── globalTest/zivid_ur_robot_integration.py
+├── zivid/capture.py
+├── ur/                              (*.script UR + test_robot.py)
+└── integration/zivid_ur_robot_integration.py
 ```
 
 Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont versionnés sur Git.
@@ -90,6 +104,9 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 | `OpenVLA_day02_trace_A.docx` | Journal jour 02 — intégration UR |
 | `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid MR130 |
 | `OpenVLA_day03_conda_anaconda.docx` | Journal jour 03 — Conda / Anaconda |
+| `OpenVLA_day04_openvla_integration.docx` | Journal jour 04 — OpenVLA et intégration Zivid/UR |
+| `scripts/zivid/capture.py` | Acquisition 2D/3D Zivid MR130 |
+| `scripts/integration/zivid_ur_robot_integration.py` | Script d’intégration Zivid + UR (en cours) |
 | `scripts/ur/URscriptLetterA.script` | Programme UR — tracé du A (boucle) |
 | `scripts/ur/traceAOnce.script` | Programme UR — tracé d’un seul A |
 | `scripts/ur/returnToCenter.script` | Programme UR — retour au centre |
