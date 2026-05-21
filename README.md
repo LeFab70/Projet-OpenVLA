@@ -58,12 +58,17 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 **Date :** 20 mai 2026
 
 - **Zivid** : connexion caméra **Zivid 2+ MR130**, acquisition 2D/3D (`capture_2d_3d`).
+- **Sauvegarde** : `scripts/zivid/capture.py` enregistre `ColorImage.png`, `Frame.zdf` et `PointCloud.ply`.
 - **Conda** : environnements Python **3.11** — `env_zivid`, `env_ur`, `env_integration`.
 
 | Rapport | Contenu |
 |---------|---------|
-| `OpenVLA_day03_zivid_api.docx` | API Zivid, exemple d’acquisition |
+| `OpenVLA_day03_zivid_api.docx` | API Zivid, script capture.py, sauvegarde image/frame/nuage |
 | `OpenVLA_day03_conda_anaconda.docx` | Guide Conda/Anaconda, arborescence, commandes |
+
+| Fichier Python (`.py`) | Description |
+|------------------------|-------------|
+| `scripts/zivid/capture.py` | Acquisition 2D/3D + sauvegarde PNG, ZDF, PLY |
 
 ## Jour 04 — OpenVLA + intégration Zivid / UR
 
@@ -138,13 +143,13 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 |-------------------|-------------|
 | `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA + installation openvla-7b (Windows 11 Pro) |
 | `OpenVLA_day02_trace_A.docx` | Journal jour 02 — tracé A, movej/movel, exécution directe |
-| `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid MR130 |
+| `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid, capture.py, sauvegarde image |
 | `OpenVLA_day03_conda_anaconda.docx` | Journal jour 03 — Conda / Anaconda |
 | `OpenVLA_day04_openvla_integration.docx` | Journal jour 04 — OpenVLA et intégration Zivid/UR |
 
 | Fichier Python (`.py`) | Description |
 |------------------------|-------------|
-| `scripts/zivid/capture.py` | Acquisition 2D/3D Zivid MR130 |
+| `scripts/zivid/capture.py` | Acquisition 2D/3D + sauvegarde ColorImage.png, Frame.zdf, PointCloud.ply |
 | `scripts/integration/test/test_openvla.py` | Test chargement OpenVLA (GPU / VRAM) |
 | `scripts/integration/test/test_zivid_openvla.py` | Test capture Zivid + inférence OpenVLA |
 | `scripts/integration/zivid_ur_robot_integration.py` | Intégration Zivid + UR (en cours) |
