@@ -26,13 +26,17 @@ Le projet visera en particulier à répondre à la question suivante : quels son
 
 ---
 
-## Jour 01 — Début de stage CCNB-INNOV
+## Jour 01 — Début de stage CCNB-INNOV (rapport final)
 
 **Date :** 14 mai 2026
 
-Présentation du stage, objectifs, responsabilités et contexte du démonstrateur OpenVLA (robot UR + caméra Zivid).
+Présentation du stage, objectifs, responsabilités et **rapport final** (parties I à III complétées) :
 
-- Rapport : `OpenVLA_day01_stage_CCNB.docx`
+- **I.** Architecture générale d'OpenVLA
+- **II.** Composantes de la pipeline (Zivid, OpenVLA, UR)
+- **III.** Comparaison OpenVLA / robotique traditionnelle
+
+- Rapport : `OpenVLA_day01_stage_CCNB.docx` — table des matières, synthèse + schémas architecture
 
 ## Jour 02 — Prise en main OpenVLA
 
@@ -149,7 +153,7 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
-| `OpenVLA_day01_stage_CCNB.docx` | Jour 01 — début de stage, objectifs CCNB-INNOV |
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III (architecture, pipeline, comparaison) |
 | `OpenVLA_day02_prise_en_main.docx` | Jour 02 — architecture OpenVLA + installation openvla-7b |
 | `OpenVLA_day03_trace_A.docx` | Jour 03 — tracé A UR, movej/movel |
 | `OpenVLA_day04_zivid_api.docx` | Jour 04 — API Zivid, capture.py, sauvegarde image |
