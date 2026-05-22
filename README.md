@@ -26,16 +26,24 @@ Le projet visera en particulier à répondre à la question suivante : quels son
 
 ---
 
-## Jour 01 — Prise en main OpenVLA
+## Jour 01 — Début de stage CCNB-INNOV
 
 **Date :** 14 mai 2026
 
-Veille et documentation : architecture OpenVLA, flux de données, comparaison aux approches robotiques classiques.
+Présentation du stage, objectifs, responsabilités et contexte du démonstrateur OpenVLA (robot UR + caméra Zivid).
 
-- Rapport : `OpenVLA_prise_en_main.docx` — inclut l’installation **openvla-7b** sous **Windows 11 Pro** (Conda Python 3.11, PyTorch CUDA, Hugging Face, tests GPU).
+- Rapport : `OpenVLA_day01_stage_CCNB.docx`
+
+## Jour 02 — Prise en main OpenVLA
+
+**Date :** 14 mai 2026
+
+Veille et documentation : architecture OpenVLA, flux de données, comparaison aux approches robotiques classiques, installation **openvla-7b** sous **Windows 11 Pro**.
+
+- Rapport : `OpenVLA_day02_prise_en_main.docx`
 - Notes d’installation détaillées : `scripts/utils.txt`
 
-## Jour 02 — Robot UR (tracé lettre A)
+## Jour 03 — Robot UR (tracé lettre A)
 
 **Date :** 19 mai 2026
 
@@ -51,9 +59,9 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 | `scripts/ur/traceAOnce.script` | Un seul A, sans boucle |
 | `scripts/ur/returnToCenter.script` | Retour au centre de la table |
 
-- Rapport : `OpenVLA_day02_trace_A.docx` — étapes, script de référence, exécution directe movej/movel
+- Rapport : `OpenVLA_day03_trace_A.docx`
 
-## Jour 03 — API Zivid + Conda (MR130)
+## Jour 04 — API Zivid + Conda (MR130)
 
 **Date :** 20 mai 2026
 
@@ -63,14 +71,14 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 
 | Rapport | Contenu |
 |---------|---------|
-| `OpenVLA_day03_zivid_api.docx` | API Zivid, script capture.py, sauvegarde image/frame/nuage |
-| `OpenVLA_day03_conda_anaconda.docx` | Guide Conda/Anaconda, arborescence, commandes |
+| `OpenVLA_day04_zivid_api.docx` | API Zivid, script capture.py, sauvegarde image/frame/nuage |
+| `OpenVLA_day04_conda_anaconda.docx` | Guide Conda/Anaconda, arborescence, commandes |
 
 | Fichier Python (`.py`) | Description |
 |------------------------|-------------|
 | `scripts/zivid/capture.py` | Acquisition 2D/3D + sauvegarde PNG, ZDF, PLY |
 
-## Jour 04 — OpenVLA + intégration Zivid / UR
+## Jour 05 — OpenVLA + intégration Zivid / UR
 
 **Date :** 21 mai 2026
 
@@ -81,7 +89,7 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 
 | Rapport | Contenu |
 |---------|---------|
-| `OpenVLA_day04_openvla_integration.docx` | Environnement OpenVLA, tests Zivid + inférence, intégration UR ↔ Zivid |
+| `OpenVLA_day05_openvla_integration.docx` | Environnement OpenVLA, tests Zivid + inférence, intégration UR ↔ Zivid |
 
 | Fichier Python (`.py`) | Rôle |
 |------------------------|------|
@@ -99,7 +107,7 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 | `env_zivid` | Caméra seule | `pip install zivid numpy opencv-python` |
 | `env_ur` | Robot seul | `pip install ur-rtde` |
 | `env_integration` | Zivid + UR | `pip install zivid ur-rtde numpy opencv-python` |
-| `env_openvla` | Inférence OpenVLA | Windows 11 Pro — voir `OpenVLA_prise_en_main.docx` et `scripts/utils.txt` |
+| `env_openvla` | Inférence OpenVLA | Windows 11 Pro — voir `OpenVLA_day02_prise_en_main.docx` et `scripts/utils.txt` |
 
 **Installation openvla-7b (Windows 11 Pro, Python 3.11)**
 
@@ -141,11 +149,12 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
-| `OpenVLA_prise_en_main.docx` | Prise en main OpenVLA + installation openvla-7b (Windows 11 Pro) |
-| `OpenVLA_day02_trace_A.docx` | Journal jour 02 — tracé A, movej/movel, exécution directe |
-| `OpenVLA_day03_zivid_api.docx` | Journal jour 03 — API Zivid, capture.py, sauvegarde image |
-| `OpenVLA_day03_conda_anaconda.docx` | Journal jour 03 — Conda / Anaconda |
-| `OpenVLA_day04_openvla_integration.docx` | Journal jour 04 — OpenVLA et intégration Zivid/UR |
+| `OpenVLA_day01_stage_CCNB.docx` | Jour 01 — début de stage, objectifs CCNB-INNOV |
+| `OpenVLA_day02_prise_en_main.docx` | Jour 02 — architecture OpenVLA + installation openvla-7b |
+| `OpenVLA_day03_trace_A.docx` | Jour 03 — tracé A UR, movej/movel |
+| `OpenVLA_day04_zivid_api.docx` | Jour 04 — API Zivid, capture.py, sauvegarde image |
+| `OpenVLA_day04_conda_anaconda.docx` | Jour 04 — Conda / Anaconda |
+| `OpenVLA_day05_openvla_integration.docx` | Jour 05 — OpenVLA et intégration Zivid/UR |
 
 | Fichier Python (`.py`) | Description |
 |------------------------|-------------|
