@@ -36,7 +36,7 @@ Présentation du stage, objectifs, responsabilités et **rapport final** (partie
 - **II.** Composantes de la pipeline (Zivid, OpenVLA, UR)
 - **III.** Comparaison OpenVLA / robotique traditionnelle
 
-- Rapport : `OpenVLA_day01_stage_CCNB.docx` — table des matières, synthèse + schémas architecture
+- Rapport : `OpenVLA_day01_stage_CCNB.docx` — table des matières, synthèse + schémas architecture (voir jour 06 pour l’édition des parties I à III)
 
 ## Jour 02 — Prise en main OpenVLA
 
@@ -104,6 +104,19 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 |-------|------|
 | `scripts/utils.txt` | Notes utilitaires (chemins, commandes, rappels) |
 
+## Jour 06 — Édition rapport final (parties I à III)
+
+**Date :** 22 mai 2026
+
+- **Rapport final** : édition et consolidation des **3 premières parties** de `OpenVLA_day01_stage_CCNB.docx`.
+- **I.** Architecture générale d'OpenVLA — description technique, schémas, contraintes openvla-7b
+- **II.** Composantes de la pipeline — Zivid, inférence OpenVLA, exécution UR
+- **III.** Comparaison OpenVLA / robotique traditionnelle — tableau et synthèse démonstrateur
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III éditées (22 mai 2026) |
+
 ### Environnements Conda (Python 3.11)
 
 | Environnement | Usage | Installation |
@@ -153,7 +166,7 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
-| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III (architecture, pipeline, comparaison) |
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III (édition jour 06, 22 mai 2026) |
 | `OpenVLA_day02_prise_en_main.docx` | Jour 02 — architecture OpenVLA + installation openvla-7b |
 | `OpenVLA_day03_trace_A.docx` | Jour 03 — tracé A UR, movej/movel |
 | `OpenVLA_day04_zivid_api.docx` | Jour 04 — API Zivid, capture.py, sauvegarde image |
