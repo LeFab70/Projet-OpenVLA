@@ -104,9 +104,11 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 |-------|------|
 | `scripts/utils.txt` | Notes utilitaires (chemins, commandes, rappels) |
 
-## Jour 06 — Édition rapport final (parties I à III)
+## Jour 06 — Rapport final + démonstrateur UR/Zivid/OpenVLA
 
-**Date :** 22 mai 2026
+**Date :** 22–23 mai 2026
+
+### Édition rapport final (22 mai)
 
 - **Rapport final** : édition et consolidation des **3 premières parties** de `OpenVLA_day01_stage_CCNB.docx`.
 - **I.** Architecture générale d'OpenVLA — description technique, schémas, contraintes openvla-7b
@@ -116,6 +118,20 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 | Rapport | Contenu |
 |---------|---------|
 | `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III éditées (22 mai 2026) |
+
+### Démonstrateur complet (23 mai)
+
+- **Intégration** : boucle fermée **Zivid → OpenVLA → UR16e** via `demoTest.py`.
+- **RTDE** : `moveL`, lecture pose TCP, pince UR native (`setToolDigitalOut`).
+- **Sécurité** : `SAFE_MODE`, `SCALE` (max 5 cm/step), vitesse/accélération limitées.
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day06_demo_ur_zivid.docx` | Démonstrateur UR16e + Zivid + OpenVLA, boucle demoTest.py |
+
+| Fichier Python (`.py`) | Description |
+|------------------------|-------------|
+| `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle capture → inférence → commande robot (mode safe / réel) |
 
 ### Environnements Conda (Python 3.11)
 
@@ -154,9 +170,11 @@ scripts/
 ├── ur/                              (*.script UR + test_robot.py)
 ├── integration/
 │   ├── zivid_ur_robot_integration.py
-│   └── test/
-│       ├── test_openvla.py
-│       └── test_zivid_openvla.py
+│   ├── test/
+│   │   ├── test_openvla.py
+│   │   └── test_zivid_openvla.py
+│   └── testUR_ZIVID/
+│       └── demoTest.py
 └── utils.txt
 ```
 
@@ -172,12 +190,14 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 | `OpenVLA_day04_zivid_api.docx` | Jour 04 — API Zivid, capture.py, sauvegarde image |
 | `OpenVLA_day04_conda_anaconda.docx` | Jour 04 — Conda / Anaconda |
 | `OpenVLA_day05_openvla_integration.docx` | Jour 05 — OpenVLA et intégration Zivid/UR |
+| `OpenVLA_day06_demo_ur_zivid.docx` | Jour 06 — démonstrateur UR16e + Zivid + OpenVLA |
 
 | Fichier Python (`.py`) | Description |
 |------------------------|-------------|
 | `scripts/zivid/capture.py` | Acquisition 2D/3D + sauvegarde ColorImage.png, Frame.zdf, PointCloud.ply |
 | `scripts/integration/test/test_openvla.py` | Test chargement OpenVLA (GPU / VRAM) |
 | `scripts/integration/test/test_zivid_openvla.py` | Test capture Zivid + inférence OpenVLA |
+| `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle Zivid + OpenVLA + UR16e (RTDE, mode safe) |
 | `scripts/integration/zivid_ur_robot_integration.py` | Intégration Zivid + UR (en cours) |
 
 | Script UR (`.script`) | Description |
