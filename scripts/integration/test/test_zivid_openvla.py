@@ -123,9 +123,9 @@ for instruction in instructions:
 
     # 🔥 Prédiction principale
     action = vla.predict_action(
-        **inputs,
-        unnorm_key="bridge_orig",
-        do_sample=False
+        **inputs, #inputs prétraités (image + texte)
+        unnorm_key="bridge_orig", # clé pour obtenir les actions non normalisées (delta XYZ, rotation, pince)
+        do_sample=False # désactiver sampling pour obtenir la prédiction la plus probable (meilleure action)
     )
 
     # =====================================================
