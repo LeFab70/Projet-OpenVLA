@@ -15,7 +15,7 @@ import time
 # ─────────────────────────────────────────
 # ⚙️ CONFIG — À MODIFIER
 # ─────────────────────────────────────────
-ROBOT_IP   = "192.168.1.10"        # IP  UR16e
+ROBOT_IP   = "192.168.xxx.xxx"        # IP  UR16e
 MODEL_PATH = r"C:\Users\Etudiant\models\openvla-7b"
 SAVE_DIR = r"C:\Users\Etudiant\StageFab\OpenVLA\outputs"
 
