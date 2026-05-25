@@ -1,3 +1,10 @@
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 19 mai 2026
+# Objectif    : Tracer la lettre A sur le plan de travail (1 à 4 répétitions)
+#               avec movej (approche) et movel (traits linéaires).
+# =============================================================================
+
 def trace_A(n):
   if (n < 1) or (n > 4):
     popup("Entre 1 et 4.")

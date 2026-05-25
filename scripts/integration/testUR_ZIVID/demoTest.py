@@ -1,7 +1,9 @@
-# ─────────────────────────────────────────────────────────────
-# DÉMONSTRATEUR OPENVLA — ZIVID + OpenVLA + UR16e
-# Pince UR native | IP xxx.xxx.xxx.xxx | Modèle OpenVLA-7b
-# ─────────────────────────────────────────────────────────────
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 22 mai 2026
+# Objectif    : Démonstrateur boucle fermée Zivid → OpenVLA → UR16e (RTDE) :
+#               capture, inférence, application des deltas d'action et pince.
+# =============================================================================
 from transformers import AutoModelForVision2Seq, AutoProcessor
 from PIL import Image
 import zivid

@@ -1,3 +1,9 @@
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 20 mai 2026
+# Objectif    : Ramener le TCP du robot UR au centre de la table en sécurité.
+# =============================================================================
+
 def ReturnToCenter():
   # Position de référence (centre de la table)
   bx = 0.0

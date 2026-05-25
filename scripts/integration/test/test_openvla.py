@@ -1,3 +1,9 @@
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 21 mai 2026
+# Objectif    : Vérifier le chargement du modèle openvla-7b sur GPU (CUDA) et
+#               l'utilisation VRAM après initialisation.
+# =============================================================================
 from transformers import AutoModelForVision2Seq, AutoProcessor
 import torch
 

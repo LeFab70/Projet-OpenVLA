@@ -1,3 +1,9 @@
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 22 mai 2026
+# Objectif    : Tester pas à pas la chaîne Zivid → OpenVLA (capture, chargement,
+#               inférence et affichage des 7 valeurs d'action).
+# =============================================================================
 from transformers import AutoModelForVision2Seq, AutoProcessor
 from PIL import Image
 import zivid

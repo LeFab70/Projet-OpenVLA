@@ -1,3 +1,9 @@
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 21 mai 2026
+# Objectif    : Acquisition 2D/3D avec la caméra Zivid et sauvegarde locale
+#               (ColorImage.png, Frame.zdf, PointCloud.ply).
+# =============================================================================
 import zivid
 import os
 def _main() -> None:

@@ -1,4 +1,9 @@
-# =========================================================
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 21 mai 2026
+# Objectif    : Capturer une scène avec la Zivid, exécuter l'inférence OpenVLA
+#               et afficher les actions prédites pour plusieurs consignes texte.
+# =============================================================================
 # IMPORT DES LIBRAIRIES
 # =========================================================
 from transformers import AutoModelForVision2Seq, AutoProcessor

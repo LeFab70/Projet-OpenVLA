@@ -1,3 +1,9 @@
+# =============================================================================
+# Programmeur : Fabrice Kouonang
+# Date        : 20 mai 2026
+# Objectif    : Tracer une seule lettre A sur le plan de travail (sans boucle).
+# =============================================================================
+
 def traceAOnce():
   set_tcp(p[0, 0, 0, 0, 0, 0])
   set_payload(1.0)
