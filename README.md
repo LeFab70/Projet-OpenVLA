@@ -35,8 +35,9 @@ Présentation du stage, objectifs, responsabilités et **rapport final** (partie
 - **I.** Architecture générale d'OpenVLA
 - **II.** Composantes de la pipeline (Zivid, OpenVLA, UR)
 - **III.** Comparaison OpenVLA / robotique traditionnelle
+- **II.5** Flux de données robot, Zivid et interprétation OpenVLA (jour 07)
 
-- Rapport : `OpenVLA_day01_stage_CCNB.docx` — table des matières, synthèse + schémas architecture (voir jour 06 pour l’édition des parties I à III)
+- Rapport : `OpenVLA_day01_stage_CCNB.docx` — table des matières, synthèse + schémas architecture (parties I à III ; II.5 jour 07)
 
 ## Jour 02 — Prise en main OpenVLA
 
@@ -103,6 +104,25 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 | Autre | Rôle |
 |-------|------|
 | `scripts/utils.txt` | Notes utilitaires (chemins, commandes, rappels) |
+
+## Jour 07 — Données robot et interprétation OpenVLA
+
+**Date :** 25 mai 2026
+
+Comprendre le **flux de données** entre Zivid, OpenVLA et le robot UR : ce qui entre réellement dans le modèle (image RGB 224×224 + consigne texte), ce que le robot fournit via RTDE (pose TCP pour exécution, pas pour l’inférence), et comment `predict_action` produit et interprète les 7 degrés de liberté.
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day07_robot_data.docx` | Entrées/sorties OpenVLA, rôle RTDE, tableau récapitulatif, scripts de référence |
+
+**Points clés :**
+
+- **Entrées OpenVLA** : capture Zivid → RGB 224×224 ; prompt `In: What action should the robot take to {instruction}?\nOut:`
+- **Pas d’entrée robot dans le modèle** : joints / pose TCP non envoyés au réseau dans la démo actuelle
+- **Robot après inférence** : `getActualTCPPose()` → `new_pose = current + action × SCALE` → `moveL` + pince
+- **Scripts** : `test_zivid_openvla.py` (sans UR), `demoTest.py` (boucle complète)
+
+Mise à jour du rapport final : section **II.5** dans `OpenVLA_day01_stage_CCNB.docx`.
 
 ## Jour 06 — Rapport final + démonstrateur UR/Zivid/OpenVLA
 
@@ -184,13 +204,14 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
-| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III (édition jour 06, 22 mai 2026) |
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III + II.5 flux données (jour 07) |
 | `OpenVLA_day02_prise_en_main.docx` | Jour 02 — architecture OpenVLA + installation openvla-7b |
 | `OpenVLA_day03_trace_A.docx` | Jour 03 — tracé A UR, movej/movel |
 | `OpenVLA_day04_zivid_api.docx` | Jour 04 — API Zivid, capture.py, sauvegarde image |
 | `OpenVLA_day04_conda_anaconda.docx` | Jour 04 — Conda / Anaconda |
 | `OpenVLA_day05_openvla_integration.docx` | Jour 05 — OpenVLA et intégration Zivid/UR |
 | `OpenVLA_day06_demo_ur_zivid.docx` | Jour 06 — démonstrateur UR16e + Zivid + OpenVLA |
+| `OpenVLA_day07_robot_data.docx` | Jour 07 — données robot, entrées OpenVLA, interprétation predict_action |
 
 | Fichier Python (`.py`) | Description |
 |------------------------|-------------|
