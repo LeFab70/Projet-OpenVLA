@@ -36,16 +36,23 @@ settings = zivid.Settings(
     color=zivid.Settings2D(acquisitions=[zivid.Settings2D.Acquisition()]),
 )
 
+# Capture 2D+3D
+#frame = camera.capture(settings)  # capture classique (3D + RGB)
 frame      = camera.capture_2d_3d(settings)
+# Image RGB (H, W, 4) → on garde les 3 canaux RGB
 image_rgba = frame.frame_2d().image_rgba_srgb().copy_data()
+# on convertit en RGB (H, W, 3) pour YOLO et OpenVLA, on retire le canal alpha
 image_rgb  = image_rgba[:, :, :3]
 
 # Point cloud XYZ
+# Les coordonnées 3D sont en mètres, on peut les convertir en mm si nécessaire pour correspondre à l'échelle de la scène
+# ici on recupère les coordonnées 3D (X, Y, Z) en mètres pour chaque pixel
 point_cloud    = frame.point_cloud().copy_data("xyz")
-h_pc, w_pc     = point_cloud.shape[:2]
-h_img, w_img   = image_rgb.shape[:2]
-scale_u        = w_pc / w_img
-scale_v        = h_pc / h_img
+
+h_pc, w_pc     = point_cloud.shape[:2]     # taille point cloud
+h_img, w_img   = image_rgb.shape[:2]    # taille image RGB
+scale_u        = w_pc / w_img # facteur de conversion horizontal (pixel image → pixel point cloud)
+scale_v        = h_pc / h_img # facteur de conversion vertical (pixel image → pixel point cloud)
 
 print(f"✅ Image RGB    : {w_img}x{h_img}")
 print(f"✅ Point cloud  : {w_pc}x{h_pc}")
@@ -84,7 +91,7 @@ for r in results:
         v_pc = min(int(v * scale_v), h_pc - 1)
 
         # Coordonnées 3D
-        X, Y, Z = point_cloud[v_pc, u_pc]
+        X, Y, Z = point_cloud[v_pc, u_pc] # ici on suppose que le point cloud est aligné avec l'image RGB, donc on peut indexer directement avec les coordonnées converties (u_pc, v_pc)
 
         # Ignorer points invalides
         if np.isnan(X) or np.isnan(Y) or np.isnan(Z):
