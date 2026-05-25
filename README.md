@@ -36,8 +36,9 @@ Présentation du stage, objectifs, responsabilités et **rapport final** (partie
 - **II.** Composantes de la pipeline (Zivid, OpenVLA, UR)
 - **III.** Comparaison OpenVLA / robotique traditionnelle
 - **II.5** Flux de données robot, Zivid et interprétation OpenVLA (jour 07)
+- **II.1.1** Détection YOLOv8 + coordonnées 3D (jour 07)
 
-- Rapport : `OpenVLA_day01_stage_CCNB.docx` — table des matières, synthèse + schémas architecture (parties I à III ; II.5 jour 07)
+- Rapport : `OpenVLA_day01_stage_CCNB.docx` — parties I à III, figures 1–4 (architecture, pipeline YOLO, poids, flux macro)
 
 ## Jour 02 — Prise en main OpenVLA
 
@@ -105,24 +106,39 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 |-------|------|
 | `scripts/utils.txt` | Notes utilitaires (chemins, commandes, rappels) |
 
-## Jour 07 — Données robot et interprétation OpenVLA
+## Jour 07 — Données robot, YOLO et interprétation OpenVLA
 
 **Date :** 25 mai 2026
 
-Comprendre le **flux de données** entre Zivid, OpenVLA et le robot UR : ce qui entre réellement dans le modèle (image RGB 224×224 + consigne texte), ce que le robot fournit via RTDE (pose TCP pour exécution, pas pour l’inférence), et comment `predict_action` produit et interprète les 7 degrés de liberté.
+Comprendre le **flux de données** entre Zivid, YOLOv8, OpenVLA et le robot UR : entrées du modèle (image RGB 224×224 + consigne texte, enrichie avec label et position 3D), rôle de la détection 2D, et exécution RTDE.
 
 | Rapport | Contenu |
 |---------|---------|
-| `OpenVLA_day07_robot_data.docx` | Entrées/sorties OpenVLA, rôle RTDE, tableau récapitulatif, scripts de référence |
+| `OpenVLA_day07_robot_data.docx` | Entrées/sorties OpenVLA, rôle RTDE, tableau récapitulatif |
+| `OpenVLA_day01_stage_CCNB.docx` | Figures 2–4 : pipeline Zivid+YOLO+OpenVLA, poids modèles, flux macro |
+
+**Pipeline Zivid → YOLO → OpenVLA (Figure 2 du rapport final) :**
+
+1. Capture Zivid RGB + profondeur (nuage de points)
+2. Détection 2D **YOLOv8n** (`yolov8n.pt`) — boîte englobante, centre pixel (u, v)
+3. Conversion Zivid : (u, v) + profondeur → coordonnées 3D (X, Y, Z) en mètres
+4. OpenVLA : image 224×224 + prompt enrichi (`pick up the {label} at position X=… Y=… Z=…`)
+5. `predict_action` → 7D ; exécution UR via RTDE (`demoTest.py`)
 
 **Points clés :**
 
-- **Entrées OpenVLA** : capture Zivid → RGB 224×224 ; prompt `In: What action should the robot take to {instruction}?\nOut:`
-- **Pas d’entrée robot dans le modèle** : joints / pose TCP non envoyés au réseau dans la démo actuelle
-- **Robot après inférence** : `getActualTCPPose()` → `new_pose = current + action × SCALE` → `moveL` + pince
-- **Scripts** : `test_zivid_openvla.py` (sans UR), `demoTest.py` (boucle complète)
+- **Entrées OpenVLA** : RGB Zivid + consigne ; variante jour 07 avec **label YOLO + position 3D** dans le prompt
+- **Pas d’entrée robot dans le modèle** : pose TCP utilisée après inférence uniquement
+- **Package** : `scripts/openVLA_ZIVID/` (install : `pip install -e .` depuis la racine, voir `setup.py`)
 
-Mise à jour du rapport final : section **II.5** dans `OpenVLA_day01_stage_CCNB.docx`.
+| Script | Rôle |
+|--------|------|
+| `scripts/openVLA_ZIVID/functions/returnAllPositions.py` | Capture Zivid + YOLO + coordonnées 3D |
+| `scripts/openVLA_ZIVID/test/zivid_yolo_openvla.py` | Pipeline complet Zivid → YOLO → OpenVLA |
+| `scripts/openVLA_ZIVID/test/test_yolo.py` | Test YOLO isolé sur image capturée |
+| `scripts/openVLA_ZIVID/test/havePositions.py` | Test de `returnAllPositions` |
+
+Mise à jour rapport final : **II.1.1** (YOLO), **II.5**, figures 1–4 dans `OpenVLA_day01_stage_CCNB.docx`.
 
 ## Jour 06 — Rapport final + démonstrateur UR/Zivid/OpenVLA
 
@@ -187,16 +203,25 @@ conda create --name env_openvla python=3.11 -y && conda activate env_openvla
 ```
 scripts/
 ├── zivid/capture.py
-├── ur/                              (*.script UR + test_robot.py)
+├── ur/                              (*.script UR)
+├── openVLA_ZIVID/                   (package pip : Zivid + YOLO + OpenVLA)
+│   ├── functions/returnAllPositions.py
+│   └── test/
+│       ├── zivid_yolo_openvla.py
+│       ├── test_yolo.py
+│       └── havePositions.py
 ├── integration/
 │   ├── zivid_ur_robot_integration.py
 │   ├── test/
 │   │   ├── test_openvla.py
-│   │   └── test_zivid_openvla.py
+│   │   ├── test_zivid_openvla.py
+│   │   └── test_zivid_inference.py
 │   └── testUR_ZIVID/
 │       └── demoTest.py
 └── utils.txt
 ```
+
+**Dépendances YOLO (environnement OpenVLA) :** `pip install ultralytics` — modèle `yolov8n.pt` à la racine du dépôt.
 
 Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont versionnés sur Git.
 
@@ -204,7 +229,7 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
-| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — parties I à III + II.5 flux données (jour 07) |
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — I à III, II.1.1 YOLO, II.5, figures pipeline |
 | `OpenVLA_day02_prise_en_main.docx` | Jour 02 — architecture OpenVLA + installation openvla-7b |
 | `OpenVLA_day03_trace_A.docx` | Jour 03 — tracé A UR, movej/movel |
 | `OpenVLA_day04_zivid_api.docx` | Jour 04 — API Zivid, capture.py, sauvegarde image |
@@ -220,6 +245,9 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 | `scripts/integration/test/test_zivid_openvla.py` | Test capture Zivid + inférence OpenVLA |
 | `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle Zivid + OpenVLA + UR16e (RTDE, mode safe) |
 | `scripts/integration/zivid_ur_robot_integration.py` | Intégration Zivid + UR (en cours) |
+| `scripts/openVLA_ZIVID/test/zivid_yolo_openvla.py` | Pipeline Zivid → YOLO → OpenVLA |
+| `scripts/openVLA_ZIVID/functions/returnAllPositions.py` | Capture + détection YOLO + coords 3D |
+| `yolov8n.pt` | Poids YOLOv8 nano (Ultralytics) |
 
 | Script UR (`.script`) | Description |
 |-----------------------|-------------|
