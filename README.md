@@ -37,8 +37,10 @@ Présentation du stage, objectifs, responsabilités et **rapport final** (partie
 - **III.** Comparaison OpenVLA / robotique traditionnelle
 - **II.5** Flux de données robot, Zivid et interprétation OpenVLA (jour 07)
 - **II.1.1** Détection YOLOv8 + coordonnées 3D (jour 07)
+- **II.1.2** Grounding DINO open-vocabulary (jour 07)
+- **II.1.3** Comparaison YOLO vs Grounding DINO
 
-- Rapport : `OpenVLA_day01_stage_CCNB.docx` — parties I à III, figures 1–4 (architecture, pipeline YOLO, poids, flux macro)
+- Rapport : `OpenVLA_day01_stage_CCNB.docx` — parties I à III, figures 1–4, sections II.1.1–II.1.3
 
 ## Jour 02 — Prise en main OpenVLA
 
@@ -106,39 +108,37 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 |-------|------|
 | `scripts/utils.txt` | Notes utilitaires (chemins, commandes, rappels) |
 
-## Jour 07 — Données robot, YOLO et interprétation OpenVLA
+## Jour 07 — Données robot, YOLO, Grounding DINO et OpenVLA
 
 **Date :** 25 mai 2026
 
-Comprendre le **flux de données** entre Zivid, YOLOv8, OpenVLA et le robot UR : entrées du modèle (image RGB 224×224 + consigne texte, enrichie avec label et position 3D), rôle de la détection 2D, et exécution RTDE.
+Comprendre le **flux de données** Zivid → détection 2D → OpenVLA → UR ; comparer **YOLOv8n** (classes COCO) et **Grounding DINO** (open-vocabulary) ; clarifier ce qui entre dans OpenVLA versus ce que le robot conserve (XYZ).
 
 | Rapport | Contenu |
 |---------|---------|
-| `OpenVLA_day07_robot_data.docx` | Entrées/sorties OpenVLA, rôle RTDE, tableau récapitulatif |
-| `OpenVLA_day01_stage_CCNB.docx` | Figures 2–4 : pipeline Zivid+YOLO+OpenVLA, poids modèles, flux macro |
+| `OpenVLA_day07_robot_data.docx` | Rapport jour 07 complet : flux UR, YOLO, Grounding DINO, tableau comparatif |
+| `OpenVLA_day01_stage_CCNB.docx` | Sections II.1.1–II.1.3, figures pipeline |
 
-**Pipeline Zivid → YOLO → OpenVLA (Figure 2 du rapport final) :**
+**Pipeline commun :** Zivid (RGB + nuage) → détection 2D → (u,v) → (X,Y,Z) → OpenVLA (224×224 + prompt) → `predict_action` → UR (RTDE).
 
-1. Capture Zivid RGB + profondeur (nuage de points)
-2. Détection 2D **YOLOv8n** (`yolov8n.pt`) — boîte englobante, centre pixel (u, v)
-3. Conversion Zivid : (u, v) + profondeur → coordonnées 3D (X, Y, Z) en mètres
-4. OpenVLA : image 224×224 + prompt enrichi (`pick up the {label} at position X=… Y=… Z=…`)
-5. `predict_action` → 7D ; exécution UR via RTDE (`demoTest.py`)
-
-**Points clés :**
-
-- **Entrées OpenVLA** : RGB Zivid + consigne ; variante jour 07 avec **label YOLO + position 3D** dans le prompt
-- **Pas d’entrée robot dans le modèle** : pose TCP utilisée après inférence uniquement
-- **Package** : `scripts/openVLA_ZIVID/` (install : `pip install -e .` depuis la racine, voir `setup.py`)
+| | **YOLOv8n** | **Grounding DINO** |
+|---|-------------|-------------------|
+| Détection | Classes COCO fixes | Texte libre (ex. `cell phone.`) |
+| Modèle | `yolov8n.pt` | `IDEA-Research/grounding-dino-base` |
+| Prompt OpenVLA | `pick up the {label} at position X=… Y=… Z=…` | `pick up the {label}` (sans XYZ) |
+| Coords 3D | Injectées dans le prompt VLA | Affichées pour le contrôleur robot |
 
 | Script | Rôle |
 |--------|------|
-| `scripts/openVLA_ZIVID/functions/returnAllPositions.py` | Capture Zivid + YOLO + coordonnées 3D |
-| `scripts/openVLA_ZIVID/test/zivid_yolo_openvla.py` | Pipeline complet Zivid → YOLO → OpenVLA |
-| `scripts/openVLA_ZIVID/test/test_yolo.py` | Test YOLO isolé sur image capturée |
-| `scripts/openVLA_ZIVID/test/havePositions.py` | Test de `returnAllPositions` |
+| `scripts/openVLA_ZIVID/test/zivid_yolo_openvla.py` | Zivid → YOLO → OpenVLA (XYZ dans prompt) |
+| `scripts/openVLA_ZIVID/test/test_zivid_groundingDino.py` | Zivid → Grounding DINO → OpenVLA |
+| `scripts/openVLA_ZIVID/functions/returnAllPositions.py` | Capture + YOLO + coords 3D |
+| `scripts/openVLA_ZIVID/test/test_yolo.py` | Test YOLO isolé |
+| `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle UR sans détecteur 2D |
 
-Mise à jour rapport final : **II.1.1** (YOLO), **II.5**, figures 1–4 dans `OpenVLA_day01_stage_CCNB.docx`.
+**Dépendances :** `pip install ultralytics` (YOLO) ; Grounding DINO via `transformers` (Hugging Face).
+
+Mise à jour rapport final : **II.1.1**, **II.1.2**, **II.1.3**, **II.5** dans `OpenVLA_day01_stage_CCNB.docx`.
 
 ## Jour 06 — Rapport final + démonstrateur UR/Zivid/OpenVLA
 
@@ -208,6 +208,7 @@ scripts/
 │   ├── functions/returnAllPositions.py
 │   └── test/
 │       ├── zivid_yolo_openvla.py
+│       ├── test_zivid_groundingDino.py
 │       ├── test_yolo.py
 │       └── havePositions.py
 ├── integration/
@@ -221,7 +222,7 @@ scripts/
 └── utils.txt
 ```
 
-**Dépendances YOLO (environnement OpenVLA) :** `pip install ultralytics` — modèle `yolov8n.pt` à la racine du dépôt.
+**Dépendances détection 2D :** `pip install ultralytics` — `yolov8n.pt` (YOLO) ; Grounding DINO via `transformers` (`grounding-dino-base` sur Hugging Face).
 
 Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont versionnés sur Git.
 
@@ -229,14 +230,14 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 
 | Rapport (`.docx`) | Description |
 |-------------------|-------------|
-| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — I à III, II.1.1 YOLO, II.5, figures pipeline |
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — I à III, II.1.1–II.1.3 détection, II.5 |
 | `OpenVLA_day02_prise_en_main.docx` | Jour 02 — architecture OpenVLA + installation openvla-7b |
 | `OpenVLA_day03_trace_A.docx` | Jour 03 — tracé A UR, movej/movel |
 | `OpenVLA_day04_zivid_api.docx` | Jour 04 — API Zivid, capture.py, sauvegarde image |
 | `OpenVLA_day04_conda_anaconda.docx` | Jour 04 — Conda / Anaconda |
 | `OpenVLA_day05_openvla_integration.docx` | Jour 05 — OpenVLA et intégration Zivid/UR |
 | `OpenVLA_day06_demo_ur_zivid.docx` | Jour 06 — démonstrateur UR16e + Zivid + OpenVLA |
-| `OpenVLA_day07_robot_data.docx` | Jour 07 — données robot, entrées OpenVLA, interprétation predict_action |
+| `OpenVLA_day07_robot_data.docx` | Jour 07 — flux UR, YOLO vs Grounding DINO, prompts OpenVLA |
 
 | Fichier Python (`.py`) | Description |
 |------------------------|-------------|
@@ -246,6 +247,7 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 | `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle Zivid + OpenVLA + UR16e (RTDE, mode safe) |
 | `scripts/integration/zivid_ur_robot_integration.py` | Intégration Zivid + UR (en cours) |
 | `scripts/openVLA_ZIVID/test/zivid_yolo_openvla.py` | Pipeline Zivid → YOLO → OpenVLA |
+| `scripts/openVLA_ZIVID/test/test_zivid_groundingDino.py` | Pipeline Zivid → Grounding DINO → OpenVLA |
 | `scripts/openVLA_ZIVID/functions/returnAllPositions.py` | Capture + détection YOLO + coords 3D |
 | `yolov8n.pt` | Poids YOLOv8 nano (Ultralytics) |
 
