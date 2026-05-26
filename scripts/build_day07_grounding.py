@@ -142,11 +142,13 @@ def build_day07():
     add_heading(doc, "4.2 Prompt OpenVLA (Grounding DINO)", level=2)
     add_para(
         doc,
-        "Choix de conception du test : OpenVLA reçoit uniquement la description sémantique de "
-        "l'objet — les coordonnées 3D ne sont pas injectées dans le prompt. Elles restent "
-        "disponibles pour le contrôleur robot (affichage / exécution future).",
+        "Choix de conception du test : OpenVLA reçoit a minima la description sémantique de "
+        "l'objet. Option d'efficacité (validée ensuite) : injecter aussi les coordonnées 3D "
+        "projetées (X,Y,Z) issues de Grounding DINO + nuage Zivid, de la même manière que YOLO, "
+        "pour guider davantage l'action.",
     )
     add_para(doc, "pick up the {label}", bold=True)
+    add_para(doc, "Option : pick up the {label} at position X=…m Y=…m Z=…m", bold=True)
     add_bullet(doc, "Script : scripts/openVLA_ZIVID/test/test_zivid_groundingDino.py")
 
     add_heading(doc, "5. Comparaison YOLO vs Grounding DINO")
@@ -157,8 +159,8 @@ def build_day07():
         ("Type de détection", "Classes COCO fixes", "Open-vocabulary (texte libre)"),
         ("Entrée détecteur", "Image RGB", "Image RGB + prompt texte (ex. cell phone.)"),
         ("Modèle", "yolov8n.pt (Ultralytics)", "grounding-dino-base (Hugging Face)"),
-        ("Prompt OpenVLA", "Label + position 3D (X, Y, Z)", "Label seul (sans XYZ)"),
-        ("Coordonnées 3D", "Dans le prompt VLA", "Réservées au contrôleur robot"),
+        ("Prompt OpenVLA", "Label + position 3D (X, Y, Z)", "Label seul (option : + XYZ projetés)"),
+        ("Coordonnées 3D", "Dans le prompt VLA", "Option : prompt VLA ou contrôleur robot"),
         ("Cas d'usage stage", "Objets COCO sur table de démo", "Ciblage par consigne naturelle"),
     ]
     for r, row in enumerate(rows):
@@ -183,7 +185,7 @@ def build_day07():
     add_heading(doc, "8. Pistes et limites")
     add_bullet(doc, "YOLO : rapide, mais limité aux classes COCO ; mauvais label si objet hors vocabulaire.")
     add_bullet(doc, "Grounding DINO : flexible (texte libre), plus lourd ; nécessite GPU et transformers.")
-    add_bullet(doc, "Fusion future : Grounding DINO pour cibler + YOLO pour vitesse, ou XYZ toujours côté RTDE.")
+    add_bullet(doc, "Piste : Grounding DINO pour cibler + injection XYZ (prompt OpenVLA) si besoin de précision.")
 
     add_heading(doc, "Livrables jour 07")
     add_bullet(doc, "OpenVLA_day07_robot_data.docx (ce document).")
@@ -251,7 +253,8 @@ def update_day01():
                     "Grounding DINO (grounding-dino-base) accepte une requête texte libre "
                     "(ex. « cell phone. ») et retourne des boîtes sans vocabulaire fixe. Même "
                     "projection 3D que YOLO. Différence clé : le prompt OpenVLA ne contient que "
-                    "pick up the {label} — les XYZ restent pour le contrôleur robot, pas pour le VLA.",
+                    "pick up the {label}. Option (jour 08) : injecter aussi les XYZ issus de la projection "
+                    "3D (Grounding DINO + Zivid) pour guider l'action, comme dans la variante YOLO.",
                 ),
                 (
                     "List Bullet",
@@ -261,7 +264,7 @@ def update_day01():
                 (
                     "Normal",
                     "YOLO : rapide, classes COCO, XYZ dans le prompt. Grounding DINO : consigne "
-                    "naturelle, flexibilité sémantique, XYZ hors prompt OpenVLA. Détail : "
+                    "naturelle, flexibilité sémantique, XYZ optionnels (label seul ou label + XYZ). Détail : "
                     "OpenVLA_day07_robot_data.docx.",
                 ),
             ]
@@ -285,7 +288,7 @@ def update_day01():
         if "variante jour 07" in p.text.lower() or p.text.startswith("Entrées modèle : image RGB"):
             p.text = (
                 "Entrées modèle : image RGB 224×224 (Zivid) + consigne texte ; jour 07 — variante YOLO "
-                "(label + XYZ dans le prompt) ou Grounding DINO (label seul, XYZ pour le robot)."
+                "(label + XYZ dans le prompt) ; Grounding DINO (label seul ou label + XYZ projetés)."
             )
             break
 

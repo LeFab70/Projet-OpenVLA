@@ -125,7 +125,7 @@ Comprendre le **flux de données** Zivid → détection 2D → OpenVLA → UR ; 
 |---|-------------|-------------------|
 | Détection | Classes COCO fixes | Texte libre (ex. `cell phone.`) |
 | Modèle | `yolov8n.pt` | `IDEA-Research/grounding-dino-base` |
-| Prompt OpenVLA | `pick up the {label} at position X=… Y=… Z=…` | `pick up the {label}` (sans XYZ) |
+| Prompt OpenVLA | `pick up the {label} at position X=… Y=… Z=…` | `pick up the {label}` (option : + XYZ projetés) |
 | Coords 3D | Injectées dans le prompt VLA | Affichées pour le contrôleur robot |
 
 | Script | Rôle |
@@ -137,6 +137,25 @@ Comprendre le **flux de données** Zivid → détection 2D → OpenVLA → UR ; 
 | `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle UR sans détecteur 2D |
 
 **Dépendances :** `pip install ultralytics` (YOLO) ; Grounding DINO via `transformers` (Hugging Face).
+
+## Jour 08 — Boucle continue (OpenVLA adaptatif)
+
+**Date :** 26 mai 2026
+
+Tester une boucle continue **perception → action → réinférence** pour rendre le système plus adaptatif (correction itérative à chaque nouvelle observation), avec Grounding DINO en amont pour localiser l’objet.
+
+- **Note importante** : il est possible d’**injecter dans l’instruction OpenVLA** les coordonnées \((X,Y,Z)\) issues de **Grounding DINO + projection 3D Zivid**, pour guider davantage l’action (comme la variante YOLO) et gagner en efficacité.
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day08_boucle_continue.docx` | Rapport jour 08 : boucle continue, scripts adaptatifs, prompt avec/sans XYZ |
+| `OpenVLA_day01_stage_CCNB.docx` | Ajout dans II.5 : boucle continue + injection XYZ (Grounding DINO) |
+
+| Script | Rôle |
+|--------|------|
+| `scripts/integration/test/demo_adaptatif_openvla.py` | DINO + UR16e + boucle OpenVLA (SAFE_MODE possible) |
+| `scripts/integration/test/demo_adaptatif_openvla_print_value.py` | DINO + boucle OpenVLA (simulation, logs valeurs) |
+| `scripts/build_day08_continuous_loop.py` | Génère le rapport jour 08 + met à jour le rapport final |
 
 Mise à jour rapport final : **II.1.1**, **II.1.2**, **II.1.3**, **II.5** dans `OpenVLA_day01_stage_CCNB.docx`.
 
