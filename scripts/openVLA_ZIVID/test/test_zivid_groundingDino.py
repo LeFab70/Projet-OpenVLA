@@ -32,7 +32,12 @@ MODEL_PATH = r"C:\Users\Etudiant\models\openvla-7b"
 SAVE_DIR = r"C:\Users\Etudiant\StageFab\OpenVLA\outputs"
 
 # Objet recherché par Grounding DINO
-TEXT_PROMPT = "cell phone."
+#TEXT_PROMPT = "cell phone"
+TEXT_PROMPT = input(
+    "🔎 Entrez l'objet à détecter : "
+).strip()
+
+
 
 BOX_THRESHOLD = 0.35
 TEXT_THRESHOLD = 0.25
