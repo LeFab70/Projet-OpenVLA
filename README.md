@@ -336,4 +336,4 @@ Idée : refactoriser le démonstrateur en **modules indépendants** pour sécuri
 | `pipeline/` | Découpage : `config.py`, `calibration.py`, `zivid_capture.py`, `dino_detector.py`, `ur_controller.py`, `gripper.py`, `vla_controller.py` |
 | `pipeline/main_real.py` | Exécution robot réel (UR16e) |
 | `pipeline/main_sim.py` | Simulation / dry-run |
-| `scripts/build_day10_refactoring_pipeline.py` | Génère le rapport jour 10 |
+

@@ -185,7 +185,7 @@ print(f"   Position 3D    : X={best['X']:.3f}m  Y={best['Y']:.3f}m  Z={best['Z']
 
 # Pose d'approche simulée
 approach_pose = [
-    best['X'],
+    best['X'], 
     best['Y'],
     best['Z'] + APPROACH_Z,
     0.0, 3.14, 0.0
