@@ -108,89 +108,6 @@ Les mêmes étapes peuvent aussi être exécutées **directement sur le robot** 
 |-------|------|
 | `scripts/utils.txt` | Notes utilitaires (chemins, commandes, rappels) |
 
-## Jour 07 — Données robot, YOLO, Grounding DINO et OpenVLA
-
-**Date :** 25 mai 2026
-
-Comprendre le **flux de données** Zivid → détection 2D → OpenVLA → UR ; comparer **YOLOv8n** (classes COCO) et **Grounding DINO** (open-vocabulary) ; clarifier ce qui entre dans OpenVLA versus ce que le robot conserve (XYZ).
-
-| Rapport | Contenu |
-|---------|---------|
-| `OpenVLA_day07_robot_data.docx` | Rapport jour 07 complet : flux UR, YOLO, Grounding DINO, tableau comparatif |
-| `OpenVLA_day01_stage_CCNB.docx` | Sections II.1.1–II.1.3, figures pipeline |
-
-**Pipeline commun :** Zivid (RGB + nuage) → détection 2D → (u,v) → (X,Y,Z) → OpenVLA (224×224 + prompt) → `predict_action` → UR (RTDE).
-
-| | **YOLOv8n** | **Grounding DINO** |
-|---|-------------|-------------------|
-| Détection | Classes COCO fixes | Texte libre (ex. `cell phone.`) |
-| Modèle | `yolov8n.pt` | `IDEA-Research/grounding-dino-base` |
-| Prompt OpenVLA | `pick up the {label} at position X=… Y=… Z=…` | `pick up the {label}` (option : + XYZ projetés) |
-| Coords 3D | Injectées dans le prompt VLA | Affichées pour le contrôleur robot |
-
-| Script | Rôle |
-|--------|------|
-| `scripts/openVLA_ZIVID/test/zivid_yolo_openvla.py` | Zivid → YOLO → OpenVLA (XYZ dans prompt) |
-| `scripts/openVLA_ZIVID/test/test_zivid_groundingDino.py` | Zivid → Grounding DINO → OpenVLA |
-| `scripts/openVLA_ZIVID/functions/returnAllPositions.py` | Capture + YOLO + coords 3D |
-| `scripts/openVLA_ZIVID/test/test_yolo.py` | Test YOLO isolé |
-| `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle UR sans détecteur 2D |
-
-**Dépendances :** `pip install ultralytics` (YOLO) ; Grounding DINO via `transformers` (Hugging Face).
-
-## Jour 08 — Boucle continue (OpenVLA adaptatif)
-
-**Date :** 26 mai 2026
-
-Tester une boucle continue **perception → action → réinférence** pour rendre le système plus adaptatif (correction itérative à chaque nouvelle observation), avec Grounding DINO en amont pour localiser l’objet.
-
-- **Note importante** : il est possible d’**injecter dans l’instruction OpenVLA** les coordonnées \((X,Y,Z)\) issues de **Grounding DINO + projection 3D Zivid**, pour guider davantage l’action (comme la variante YOLO) et gagner en efficacité.
-
-| Rapport | Contenu |
-|---------|---------|
-| `OpenVLA_day08_boucle_continue.docx` | Rapport jour 08 : boucle continue, scripts adaptatifs, prompt avec/sans XYZ |
-| `OpenVLA_day01_stage_CCNB.docx` | Ajout dans II.5 : boucle continue + injection XYZ (Grounding DINO) |
-
-| Script | Rôle |
-|--------|------|
-| `scripts/integration/test/demo_adaptatif_openvla.py` | DINO + UR16e + boucle OpenVLA (SAFE_MODE possible) |
-| `scripts/integration/test/demo_adaptatif_openvla_print_value.py` | DINO + boucle OpenVLA (simulation, logs valeurs) |
-| `scripts/build_day08_continuous_loop.py` | Génère le rapport jour 08 + met à jour le rapport final |
-
-Mise à jour rapport final : **II.1.1**, **II.1.2**, **II.1.3**, **II.5** dans `OpenVLA_day01_stage_CCNB.docx`.
-
-## Jour 09 — Tests, interprétation et mise à jour des rapports
-
-**Date :** 27 mai 2026
-
-Objectif : valider et analyser en détail la boucle continue (OpenVLA adaptatif) avec Grounding DINO ; interpréter les résultats en fonction
-des coordonnées (X,Y,Z) fournies par DINO et la projection 3D Zivid.
-
-- **Procédure de test :**
-	- Exécuter `scripts/integration/test/demo_adaptatif_openvla_print_value.py` (mode simulation) pour consigner par itération : itération, coordonnées DINO (X,Y,Z), prédiction OpenVLA (delta), position TCP projetée, distance au but, état pince.
-	- Pour essai réel, lancer `scripts/integration/test/demo_adaptatif_openvla.py` avec `SAFE_MODE` activé.
-
-- **Métriques à collecter :**
-	- Distance euclidienne entre l'objectif (X,Y,Z) de DINO et la position atteinte après chaque étape (m).
-	- Nombre d'itérations jusqu'à convergence (distance < seuil défini).
-	- Évolution de la coordonnée Z (vérifier la profondeur et saisie).
-	- Stabilité des détections DINO (changement de bbox / multi-détections).
-
-- **Interprétation rapide :**
-	- Convergence rapide et décroissance monotone de la distance → comportement attendu (succès).
-	- Oscillation autour d'un offset constant → possible erreur de calibration TCP/transform.
-	- Divergence ou augmentation de la distance → détection instable ou SCALE de mouvement trop grand.
-	- Variations importantes en Z → bruit de projection 3D (nuage Zivid) ; proposer d'augmenter la moyenne locale ou le filtre de profondeur.
-
-- **Livrables jour 09 :**
-	- `OpenVLA_day09_boucle_results.docx` — rapport d'expérimentation (tableaux, graphiques, synthèse).
-	- Mise à jour de `OpenVLA_day01_stage_CCNB.docx` : ajout d'un appendice II.5 avec résultats et interprétation.
-
-- **Scripts utiles / remarques :**
-	- `scripts/integration/test/demo_adaptatif_openvla_print_value.py` (logs détaillés pour analyse).
-	- `scripts/integration/test/demo_adaptatif_openvla.py` (exécution avec robot / SAFE_MODE).
-	- `scripts/build_day08_continuous_loop.py` peut être étendu pour générer automatiquement `OpenVLA_day09_boucle_results.docx`.
-
 ## Jour 06 — Rapport final + démonstrateur UR/Zivid/OpenVLA
 
 Note : section déplacée après Jour 09 — révisée le 27 mai 2026.
@@ -313,3 +230,86 @@ Les fichiers `.py` sont en local (voir `.gitignore`) ; les `.script` UR sont ver
 | Autre | Description |
 |-------|-------------|
 | `scripts/utils.txt` | Notes utilitaires du projet |
+
+## Jour 07 — Données robot, YOLO, Grounding DINO et OpenVLA
+
+**Date :** 25 mai 2026
+
+Comprendre le **flux de données** Zivid → détection 2D → OpenVLA → UR ; comparer **YOLOv8n** (classes COCO) et **Grounding DINO** (open-vocabulary) ; clarifier ce qui entre dans OpenVLA versus ce que le robot conserve (XYZ).
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day07_robot_data.docx` | Rapport jour 07 complet : flux UR, YOLO, Grounding DINO, tableau comparatif |
+| `OpenVLA_day01_stage_CCNB.docx` | Sections II.1.1–II.1.3, figures pipeline |
+
+**Pipeline commun :** Zivid (RGB + nuage) → détection 2D → (u,v) → (X,Y,Z) → OpenVLA (224×224 + prompt) → `predict_action` → UR (RTDE).
+
+| | **YOLOv8n** | **Grounding DINO** |
+|---|-------------|-------------------|
+| Détection | Classes COCO fixes | Texte libre (ex. `cell phone.`) |
+| Modèle | `yolov8n.pt` | `IDEA-Research/grounding-dino-base` |
+| Prompt OpenVLA | `pick up the {label} at position X=… Y=… Z=…` | `pick up the {label}` (option : + XYZ projetés) |
+| Coords 3D | Injectées dans le prompt VLA | Affichées pour le contrôleur robot |
+
+| Script | Rôle |
+|--------|------|
+| `scripts/openVLA_ZIVID/test/zivid_yolo_openvla.py` | Zivid → YOLO → OpenVLA (XYZ dans prompt) |
+| `scripts/openVLA_ZIVID/test/test_zivid_groundingDino.py` | Zivid → Grounding DINO → OpenVLA |
+| `scripts/openVLA_ZIVID/functions/returnAllPositions.py` | Capture + YOLO + coords 3D |
+| `scripts/openVLA_ZIVID/test/test_yolo.py` | Test YOLO isolé |
+| `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle UR sans détecteur 2D |
+
+**Dépendances :** `pip install ultralytics` (YOLO) ; Grounding DINO via `transformers` (Hugging Face).
+
+## Jour 08 — Boucle continue (OpenVLA adaptatif)
+
+**Date :** 26 mai 2026
+
+Tester une boucle continue **perception → action → réinférence** pour rendre le système plus adaptatif (correction itérative à chaque nouvelle observation), avec Grounding DINO en amont pour localiser l’objet.
+
+- **Note importante** : il est possible d’**injecter dans l’instruction OpenVLA** les coordonnées \((X,Y,Z)\) issues de **Grounding DINO + projection 3D Zivid**, pour guider davantage l’action (comme la variante YOLO) et gagner en efficacité.
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day08_boucle_continue.docx` | Rapport jour 08 : boucle continue, scripts adaptatifs, prompt avec/sans XYZ |
+| `OpenVLA_day01_stage_CCNB.docx` | Ajout dans II.5 : boucle continue + injection XYZ (Grounding DINO) |
+
+| Script | Rôle |
+|--------|------|
+| `scripts/integration/test/demo_adaptatif_openvla.py` | DINO + UR16e + boucle OpenVLA (SAFE_MODE possible) |
+| `scripts/integration/test/demo_adaptatif_openvla_print_value.py` | DINO + boucle OpenVLA (simulation, logs valeurs) |
+| `scripts/build_day08_continuous_loop.py` | Génère le rapport jour 08 + met à jour le rapport final |
+
+Mise à jour rapport final : **II.1.1**, **II.1.2**, **II.1.3**, **II.5** dans `OpenVLA_day01_stage_CCNB.docx`.
+
+## Jour 09 — Tests, interprétation et mise à jour des rapports
+
+**Date :** 27 mai 2026
+
+Objectif : valider et analyser en détail la boucle continue (OpenVLA adaptatif) avec Grounding DINO ; interpréter les résultats en fonction
+des coordonnées (X,Y,Z) fournies par DINO et la projection 3D Zivid.
+
+- **Procédure de test :**
+	- Exécuter `scripts/integration/test/demo_adaptatif_openvla_print_value.py` (mode simulation) pour consigner par itération : itération, coordonnées DINO (X,Y,Z), prédiction OpenVLA (delta), position TCP projetée, distance au but, état pince.
+	- Pour essai réel, lancer `scripts/integration/test/demo_adaptatif_openvla.py` avec `SAFE_MODE` activé.
+
+- **Métriques à collecter :**
+	- Distance euclidienne entre l'objectif (X,Y,Z) de DINO et la position atteinte après chaque étape (m).
+	- Nombre d'itérations jusqu'à convergence (distance < seuil défini).
+	- Évolution de la coordonnée Z (vérifier la profondeur et saisie).
+	- Stabilité des détections DINO (changement de bbox / multi-détections).
+
+- **Interprétation rapide :**
+	- Convergence rapide et décroissance monotone de la distance → comportement attendu (succès).
+	- Oscillation autour d'un offset constant → possible erreur de calibration TCP/transform.
+	- Divergence ou augmentation de la distance → détection instable ou SCALE de mouvement trop grand.
+	- Variations importantes en Z → bruit de projection 3D (nuage Zivid) ; proposer d'augmenter la moyenne locale ou le filtre de profondeur.
+
+- **Livrables jour 09 :**
+	- `OpenVLA_day09_boucle_results.docx` — rapport d'expérimentation (tableaux, graphiques, synthèse).
+	- Mise à jour de `OpenVLA_day01_stage_CCNB.docx` : ajout d'un appendice II.5 avec résultats et interprétation.
+
+- **Scripts utiles / remarques :**
+	- `scripts/integration/test/demo_adaptatif_openvla_print_value.py` (logs détaillés pour analyse).
+	- `scripts/integration/test/demo_adaptatif_openvla.py` (exécution avec robot / SAFE_MODE).
+	- `scripts/build_day08_continuous_loop.py` peut être étendu pour générer automatiquement `OpenVLA_day09_boucle_results.docx`.
