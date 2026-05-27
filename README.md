@@ -159,6 +159,38 @@ Tester une boucle continue **perception → action → réinférence** pour rend
 
 Mise à jour rapport final : **II.1.1**, **II.1.2**, **II.1.3**, **II.5** dans `OpenVLA_day01_stage_CCNB.docx`.
 
+## Jour 09 — Tests, interprétation et mise à jour des rapports
+
+**Date :** 27 mai 2026
+
+Objectif : valider et analyser en détail la boucle continue (OpenVLA adaptatif) avec Grounding DINO ; interpréter les résultats en fonction
+des coordonnées (X,Y,Z) fournies par DINO et la projection 3D Zivid.
+
+- **Procédure de test :**
+	- Exécuter `scripts/integration/test/demo_adaptatif_openvla_print_value.py` (mode simulation) pour consigner par itération : itération, coordonnées DINO (X,Y,Z), prédiction OpenVLA (delta), position TCP projetée, distance au but, état pince.
+	- Pour essai réel, lancer `scripts/integration/test/demo_adaptatif_openvla.py` avec `SAFE_MODE` activé.
+
+- **Métriques à collecter :**
+	- Distance euclidienne entre l'objectif (X,Y,Z) de DINO et la position atteinte après chaque étape (m).
+	- Nombre d'itérations jusqu'à convergence (distance < seuil défini).
+	- Évolution de la coordonnée Z (vérifier la profondeur et saisie).
+	- Stabilité des détections DINO (changement de bbox / multi-détections).
+
+- **Interprétation rapide :**
+	- Convergence rapide et décroissance monotone de la distance → comportement attendu (succès).
+	- Oscillation autour d'un offset constant → possible erreur de calibration TCP/transform.
+	- Divergence ou augmentation de la distance → détection instable ou SCALE de mouvement trop grand.
+	- Variations importantes en Z → bruit de projection 3D (nuage Zivid) ; proposer d'augmenter la moyenne locale ou le filtre de profondeur.
+
+- **Livrables jour 09 :**
+	- `OpenVLA_day09_boucle_results.docx` — rapport d'expérimentation (tableaux, graphiques, synthèse).
+	- Mise à jour de `OpenVLA_day01_stage_CCNB.docx` : ajout d'un appendice II.5 avec résultats et interprétation.
+
+- **Scripts utiles / remarques :**
+	- `scripts/integration/test/demo_adaptatif_openvla_print_value.py` (logs détaillés pour analyse).
+	- `scripts/integration/test/demo_adaptatif_openvla.py` (exécution avec robot / SAFE_MODE).
+	- `scripts/build_day08_continuous_loop.py` peut être étendu pour générer automatiquement `OpenVLA_day09_boucle_results.docx`.
+
 ## Jour 06 — Rapport final + démonstrateur UR/Zivid/OpenVLA
 
 **Date :** 22–23 mai 2026
