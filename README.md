@@ -313,3 +313,27 @@ des coordonnées (X,Y,Z) fournies par DINO et la projection 3D Zivid.
 	- `scripts/integration/test/demo_adaptatif_openvla_print_value.py` (logs détaillés pour analyse).
 	- `scripts/integration/test/demo_adaptatif_openvla.py` (exécution avec robot / SAFE_MODE).
 	- `scripts/build_day08_continuous_loop.py` peut être étendu pour générer automatiquement `OpenVLA_day09_boucle_results.docx`.
+
+## Jour 10 — Refactoring pipeline (modules indépendants)
+
+**Date :** 28 mai 2026
+
+Idée : refactoriser le démonstrateur en **modules indépendants** pour sécuriser l’intégration UR16e, corriger les bugs majeurs (calibration/workspace), et rendre la boucle continue plus robuste (réintégration DINO).
+
+- **Points critiques** :
+	- Calibration main-œil (caméra → robot) **obligatoire** : sans `T_tcp_cam.npy`, conversion DINO → robot non fiable.
+	- **Workspace** : bornes obligatoires pour éviter des mouvements hors cellule.
+	- **Réintégrer DINO** dans la boucle (toutes les N étapes) pour corriger la dérive.
+	- **Prompt dynamique OpenVLA** : préférer une consigne relative basée sur la distance TCP→objet (deltas), plutôt que des coordonnées absolues.
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day10_refactoring_pipeline.docx` | Rapport jour 10 : refactoring + points de sécurité |
+| `OpenVLA_day01_stage_CCNB.docx` | Ajout note “Jour 10” dans II.5 |
+
+| Dossier / scripts | Rôle |
+|-------------------|------|
+| `pipeline/` | Découpage : `config.py`, `calibration.py`, `zivid_capture.py`, `dino_detector.py`, `ur_controller.py`, `gripper.py`, `vla_controller.py` |
+| `pipeline/main_real.py` | Exécution robot réel (UR16e) |
+| `pipeline/main_sim.py` | Simulation / dry-run |
+| `scripts/build_day10_refactoring_pipeline.py` | Génère le rapport jour 10 |
