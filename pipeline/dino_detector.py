@@ -71,7 +71,11 @@ class DinoDetector:
             target_sizes=[pil.size[::-1]],
         )
 
-        h, w = image_rgb.shape[:2]
+        h_img, w_img = image_rgb.shape[:2]
+        h_pc, w_pc = point_cloud_mm.shape[:2]
+        # Zivid: la résolution du point cloud peut différer de l'image 2D.
+        scale_u = w_pc / max(w_img, 1)
+        scale_v = h_pc / max(h_img, 1)
         best: Optional[DinoDetection] = None
 
         for result in results:
@@ -81,10 +85,14 @@ class DinoDetector:
                 x1, y1, x2, y2 = [float(v) for v in box.tolist()]
                 u = int(round((x1 + x2) / 2))
                 v = int(round((y1 + y2) / 2))
-                u = int(np.clip(u, 0, w - 1))
-                v = int(np.clip(v, 0, h - 1))
+                u = int(np.clip(u, 0, w_img - 1))
+                v = int(np.clip(v, 0, h_img - 1))
 
-                Xmm, Ymm, Zmm = [float(vv) for vv in point_cloud_mm[v, u]]
+                # Map (u,v) image -> (u_pc, v_pc) point cloud
+                u_pc = int(np.clip(round(u * scale_u), 0, w_pc - 1))
+                v_pc = int(np.clip(round(v * scale_v), 0, h_pc - 1))
+
+                Xmm, Ymm, Zmm = [float(vv) for vv in point_cloud_mm[v_pc, u_pc]]
                 if not np.isfinite(Xmm) or not np.isfinite(Ymm) or not np.isfinite(Zmm):
                     continue
                 if not validate_depth(Zmm, label=str(label)):
