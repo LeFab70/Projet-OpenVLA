@@ -193,6 +193,8 @@ des coordonnées (X,Y,Z) fournies par DINO et la projection 3D Zivid.
 
 ## Jour 06 — Rapport final + démonstrateur UR/Zivid/OpenVLA
 
+Note : section déplacée après Jour 09 — révisée le 27 mai 2026.
+
 **Date :** 22–23 mai 2026
 
 ### Édition rapport final (22 mai)
