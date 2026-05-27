@@ -23,3 +23,7 @@ assets/
 # Fichiers temporaires Word / Office
 ~$*
 .DS_Store
+
+# Ignorer scripts de génération et de mise à jour automatique des rapports
+scripts/build_*
+scripts/update_report*
