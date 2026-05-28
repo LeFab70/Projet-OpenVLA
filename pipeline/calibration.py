@@ -46,12 +46,12 @@ def cam_to_robot(xyz_cam_m: np.ndarray, tcp_pose: list, T_tcp_cam: np.ndarray) -
     P_base = T_base_tcp @ T_tcp_cam @ P_cam
     return P_base[:3]
 
-
+# ici on calcule la distance entre TCP et objet, pour critère d'arrêt simple (dans la réalité, on brancherait la commande de la pince Robotiq ici pour fermer la pince lorsque proche de l'objet)
 def compute_distance_tcp_to_object(xyz_robot_obj: np.ndarray, tcp_pose: list) -> float:
     tcp_xyz = np.array(tcp_pose[:3], dtype=np.float64)
     return float(np.linalg.norm(np.asarray(xyz_robot_obj, dtype=np.float64) - tcp_xyz))
 
-
+# ici on calcule la pose cible pour le robot, en appliquant une approche verticale (dans la réalité, on brancherait la commande de la pince Robotiq ici pour fermer la pince lorsque proche de l'objet)
 def _pose_to_matrix(pose: list) -> np.ndarray:
     """Pose UR axis-angle -> matrice homogène 4x4."""
     x, y, z, rx, ry, rz = [float(v) for v in pose]

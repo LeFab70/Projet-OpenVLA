@@ -30,7 +30,7 @@ from .config import (
 from .dino_detector import DinoDetector
 from .ur_controller import Pose6, URController
 from .vla_controller import VLAController
-from .zivid_capture import init_camera, capture
+from .zivid_capture import init_camera, capture, save_capture
 
 
 @dataclass
@@ -69,6 +69,10 @@ def main() -> None:
 
     # Détection initiale
     image_rgb, pc_mm = capture(camera)
+    #stockage image pour debug
+    save_capture(image_rgb, filename="dino_initial.png")
+
+    
     det = dino.detect(image_rgb, pc_mm, text_prompt)
     if det is None:
         raise RuntimeError(f"Aucune détection DINO pour '{text_prompt}'")
@@ -83,6 +87,9 @@ def main() -> None:
         # 4) Réintégrer DINO périodiquement pour corriger dérive (même en SIM)
         if step == 1 or (DINO_EVERY_N_STEPS > 0 and step % DINO_EVERY_N_STEPS == 0):
             image_rgb, pc_mm = capture(camera)
+            # save image pour debug
+           
+            save_capture(image_rgb, filename=f"dino_step{step:02d}.png")
             det2 = dino.detect(image_rgb, pc_mm, text_prompt)
             if det2 is not None:
                 det = det2
@@ -113,6 +120,7 @@ def main() -> None:
         )
 
         # arrêt simple : proche + gripper ferme
+        # ici on s'arrete si proche cible + gripper fermé (dans la réalité, on brancherait la commande de la pince Robotiq ici)
         if dist < 0.03 and action.gripper < GRIPPER_THRESHOLD and step > 2:
             print("🏁 FIN (SIM): proche cible + gripper<seuil")
             break

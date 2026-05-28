@@ -20,7 +20,7 @@ import numpy as np
 # ─────────────────────────────────────────
 # 🤖 ROBOT (UR16e)
 # ─────────────────────────────────────────
-ROBOT_IP = "192.168.1.10"
+ROBOT_IP = "xxx.xxx.xxx.xxx"  #adresse IP du robot
 ROBOT_SPEED = 0.05
 ROBOT_ACCEL = 0.10
 APPROACH_SPEED = 0.30
@@ -51,6 +51,12 @@ ZIVID_Z_MAX = 1.50  # m
 # ─────────────────────────────────────────
 # 🔧 CALIBRATION MAIN-ŒIL (eye-in-hand)
 # ─────────────────────────────────────────
+# IMPORTANT : sans cette calibration, les coordonnées DINO (repère caméra)
+# ne peuvent PAS être converties en coordonnées robot fiables.
+#le fichier de calibration doit contenir une matrice 4x4 numpy (dtype=np.float64) représentant la transformation homogène T_tcp_cam (repère caméra → repère TCP)
+# Guide ZIVID : https://support.zivid.com/en/latest/how-to/hand-eye-calibration
+# Par défaut, on utilise une matrice identité (T_tcp_cam = I) qui suppose que le repère caméra est aligné avec le repère TCP, ce qui est très imprécis et ne doit être utilisé que pour des tests sans robot réel (ex: pipeline main_sim.py)
+# En mode réel, il est impératif de réaliser la calibration main-œil et de stocker la matrice T_tcp_cam dans le fichier CALIBRATION_FILE pour que la conversion caméra→robot soit fiable.
 CALIBRATION_FILE = r"C:\Users\Etudiant\models\calibration\T_tcp_cam.npy"
 T_TCP_CAM_DEFAULT = np.eye(4, dtype=np.float64)
 

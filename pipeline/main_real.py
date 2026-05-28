@@ -74,6 +74,9 @@ def main() -> None:
     try:
         # Détection initiale
         image_rgb, pc_mm = capture(camera)
+        #stockage image pour debug
+        from zivid_capture import save_capture
+        save_capture(image_rgb, filename="dino_initial.png")
         det = dino.detect(image_rgb, pc_mm, text_prompt)
         if det is None:
             raise RuntimeError(f"Aucune détection DINO pour '{text_prompt}'")
@@ -92,6 +95,9 @@ def main() -> None:
             # 4) Réintégrer DINO périodiquement pour corriger dérive
             if step == 1 or (DINO_EVERY_N_STEPS > 0 and step % DINO_EVERY_N_STEPS == 0):
                 image_rgb, pc_mm = capture(camera)
+                # save image pour debug
+                from zivid_capture import save_capture
+                save_capture(image_rgb,filename=f"dino_step{step:02d}.png")
                 det2 = dino.detect(image_rgb, pc_mm, text_prompt)
                 if det2 is not None:
                     det = det2
@@ -124,6 +130,7 @@ def main() -> None:
             )
 
             # arrêt simple
+            # ici on s'arrete si proche cible + gripper fermé (dans la réalité, on brancherait la commande de la pince Robotiq ici)
             if dist < 0.03 and action.gripper < GRIPPER_THRESHOLD and step > 2:
                 print("🏁 FIN: proche cible + gripper<seuil (brancher Robotiq ici)")
                 break
