@@ -57,6 +57,49 @@ def build():
     add_bullet(doc, "Mode réel bloqué tant que la matrice de calibration n’est pas générée et validée.")
 
     add_heading(doc, "3. Solutions proposées / mises en œuvre")
+    add_heading(doc, "3.0 Architecture calibration — I, II, III", level=2)
+    add_para(
+        doc,
+        "Deux modules distincts dans pipeline/ : un script autonome pour créer T_tcp_cam.npy, "
+        "et un module chargé à chaque exécution du pipeline pour convertir les coordonnées pendant les déplacements OpenVLA.",
+    )
+    add_heading(doc, "I. Fichier T_tcp_cam.npy (traducteur caméra → robot)", level=3)
+    add_para(
+        doc,
+        "Matrice homogène 4×4 sauvegardée avec numpy (np.save) après calibration Zivid réussie. "
+        "Sans ce fichier, DINO/OpenVLA voient l’objet dans le repère caméra ; le UR16e ne peut pas "
+        "interpréter « à gauche de la caméra » sans conversion.",
+    )
+    add_bullet(doc, "Chemin : CALIBRATION_FILE dans pipeline/config.py → T_tcp_cam.npy.")
+    add_heading(doc, "II. pipeline/calibrer_robot.py — exécution seule (création du fichier)", level=3)
+    add_para(
+        doc,
+        "Script indépendant de main_real.py / main_sim.py. À lancer une fois (ou après déplacement de la caméra) "
+        "pour produire T_tcp_cam.npy.",
+    )
+    add_bullet(
+        doc,
+        "Pour chaque pose : capture Zivid (camera.capture()), détection mire damier noir/blanc "
+        "(zivid.calibration.detect_feature_points sur le point cloud).",
+    )
+    add_bullet(
+        doc,
+        "Échantillons hand-eye : pose TCP UR + détection valide → calibrate_eye_in_hand() → np.save(T_tcp_cam).",
+    )
+    add_bullet(doc, "Commande : python -m pipeline.calibrer_robot (environnements Zivid + RTDE).")
+    add_heading(doc, "III. pipeline/calibration.py — à chaque run du pipeline OpenVLA", level=3)
+    add_bullet(doc, "load_calibration() : charge T_tcp_cam.npy (ou matrice défaut si absent).")
+    add_bullet(
+        doc,
+        "cam_to_robot() : reconvertit xyz caméra → base robot à chaque déplacement (utilisé par main_real.py).",
+    )
+    add_bullet(doc, "compute_distance_tcp_to_object() : distance TCP–objet pour critère d’arrêt / prompt.")
+    add_para(
+        doc,
+        "calibrer_robot.py trouve la mire et écrit le fichier ; calibration.py le relit en continu pendant la boucle OpenVLA.",
+        bold=True,
+    )
+
     add_heading(doc, "3.1 Le fichier .npy — traducteur mathématique (T_tcp_cam)", level=2)
     add_para(
         doc,

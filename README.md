@@ -342,26 +342,60 @@ Idée : refactoriser le démonstrateur en **modules indépendants** pour sécuri
 
 **Date :** 29 mai 2026
 
-Rapport hebdomadaire : problèmes rencontrés, solutions proposées, résumé de la semaine, objectifs semaine suivante. Mise en place de la **calibration caméra → robot** (fichier `.npy`).
+Rapport hebdomadaire (semaine 26–29 mai) + mise en place de la **calibration caméra → robot**.  
+Le rapport final (`OpenVLA_day01_stage_CCNB.docx`) reprend cette section en **II.6** avec les parties **I à V** ci-dessous.
 
-### Le fichier `.npy` — traducteur mathématique (`T_tcp_cam`)
+### I. Fichier `T_tcp_cam.npy` — traducteur mathématique
 
-Sans la matrice `T_tcp_cam.npy`, la caméra et le bras ne partagent pas le même repère :
+Sans la matrice **T_tcp_cam** (4×4), la caméra et le bras ne partagent pas le même repère :
 
 - **Caméra** : « Je vois la bouteille à 10 cm à ma gauche et 50 cm devant moi. »
 - **Robot** : « Moi, je suis à 40 cm de ma base. Je ne sais pas où est ta gauche. »
 
-La matrice **T_tcp_cam** (4×4) permet de convertir : *la gauche de la caméra correspond à l’axe -Y de la base du robot*.
+Après calibration Zivid réussie, le résultat est enregistré avec **`np.save`** :
 
-### Les 3 règles d’or pour les poses de calibration
+```python
+np.save(CALIBRATION_FILE, T_tcp_cam)  # → T_tcp_cam.npy (voir pipeline/config.py)
+```
+
+### II. `pipeline/calibrer_robot.py` — script **autonome** (création du fichier)
+
+À exécuter **seul**, indépendamment de `main_real.py` / `main_sim.py`, pour générer ou régénérer `T_tcp_cam.npy` :
+
+1. Déplacer le UR16e vers des poses variées (mire damier noir et blanc visible).
+2. Pour chaque pose : **`camera.capture()`** (échantillon Zivid), puis détection de la mire via **`zivid.calibration.detect_feature_points`** sur le nuage de points.
+3. Accumuler les paires pose TCP + détection valide, puis **`zivid.calibration.calibrate_eye_in_hand`**.
+4. Si la calibration est valide : **`np.save`** vers `T_tcp_cam.npy`.
+
+```bash
+python -m pipeline.calibrer_robot
+```
+
+### III. `pipeline/calibration.py` — utilisé **à chaque** run OpenVLA
+
+Lors des déplacements du pipeline (perception → OpenVLA → RTDE), ce module **recharge** la matrice et convertit les coordonnées :
+
+| Fonction | Rôle |
+|----------|------|
+| `load_calibration()` | `np.load(T_tcp_cam.npy)` si présent, sinon matrice identité |
+| `cam_to_robot()` | Convertit un point DINO (repère caméra) → base robot |
+| `compute_distance_tcp_to_object()` | Distance TCP–objet (arrêt / prompt adaptatif) |
+
+**Distinction :** `calibrer_robot.py` **crée** le fichier (mire + hand-eye) ; `calibration.py` **l’utilise** à chaque cycle pour réajuster les mouvements.
+
+### IV. Les 3 règles d’or pour les poses de calibration
 
 - **Varier l’inclinaison** : ne pas rester toujours à la verticale (RX=0, RY=3.14). Incliner le poignet de ±15° à ±25° (~0,3 à 0,4 rad).
 - **Varier la hauteur (Z)** : captures à ~40 cm, 50 cm et 60 cm de la mire.
 - **Rotation RZ** : faire tourner l’outil sur lui-même.
 
-| Rapport / dossier | Contenu |
-|-------------------|---------|
-| `OpenVLA_day11_rapport_hebdomadaire.docx` | Rapport hebdomadaire (semaine 26–29 mai) |
+### V. Livrables
+
+| Rapport / module | Contenu |
+|------------------|---------|
+| `OpenVLA_day11_rapport_hebdomadaire.docx` | Rapport hebdomadaire (parties I–III calibration) |
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — section **II.6 Jour 11** |
 | `rapports_hebdomadaires/` | Dossier des rapports hebdomadaires (à compléter) |
-| `pipeline/calibrer_robot.py` | Script calibration eye-in-hand → `T_tcp_cam.npy` |
+| `pipeline/calibrer_robot.py` | Calibration eye-in-hand → `T_tcp_cam.npy` |
+| `pipeline/calibration.py` | Chargement + conversion à chaque exécution pipeline |
 
