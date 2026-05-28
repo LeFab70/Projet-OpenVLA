@@ -336,4 +336,32 @@ Idée : refactoriser le démonstrateur en **modules indépendants** pour sécuri
 | `pipeline/` | Découpage : `config.py`, `calibration.py`, `zivid_capture.py`, `dino_detector.py`, `ur_controller.py`, `gripper.py`, `vla_controller.py` |
 | `pipeline/main_real.py` | Exécution robot réel (UR16e) |
 | `pipeline/main_sim.py` | Simulation / dry-run |
+| `pipeline/calibrer_robot.py` | Calibration main-œil UR16e + Zivid → sauvegarde `T_tcp_cam.npy` |
+
+## Jour 11 — Rapport hebdomadaire + calibration main-œil (T_tcp_cam)
+
+**Date :** 29 mai 2026
+
+Rapport hebdomadaire : problèmes rencontrés, solutions proposées, résumé de la semaine, objectifs semaine suivante. Mise en place de la **calibration caméra → robot** (fichier `.npy`).
+
+### Le fichier `.npy` — traducteur mathématique (`T_tcp_cam`)
+
+Sans la matrice `T_tcp_cam.npy`, la caméra et le bras ne partagent pas le même repère :
+
+- **Caméra** : « Je vois la bouteille à 10 cm à ma gauche et 50 cm devant moi. »
+- **Robot** : « Moi, je suis à 40 cm de ma base. Je ne sais pas où est ta gauche. »
+
+La matrice **T_tcp_cam** (4×4) permet de convertir : *la gauche de la caméra correspond à l’axe -Y de la base du robot*.
+
+### Les 3 règles d’or pour les poses de calibration
+
+- **Varier l’inclinaison** : ne pas rester toujours à la verticale (RX=0, RY=3.14). Incliner le poignet de ±15° à ±25° (~0,3 à 0,4 rad).
+- **Varier la hauteur (Z)** : captures à ~40 cm, 50 cm et 60 cm de la mire.
+- **Rotation RZ** : faire tourner l’outil sur lui-même.
+
+| Rapport / dossier | Contenu |
+|-------------------|---------|
+| `OpenVLA_day11_rapport_hebdomadaire.docx` | Rapport hebdomadaire (semaine 26–29 mai) |
+| `rapports_hebdomadaires/` | Dossier des rapports hebdomadaires (à compléter) |
+| `pipeline/calibrer_robot.py` | Script calibration eye-in-hand → `T_tcp_cam.npy` |
 
