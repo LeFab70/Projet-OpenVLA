@@ -16,13 +16,29 @@ from scipy.spatial.transform import Rotation
 from pipeline.config import CALIBRATION_FILE, ROBOT_IP
 
 def run_calibration():
+
+    print("=" * 60)
+    print("  CALIBRATION MAIN-ŒIL — UR16e + ZIVID Two")
+    print("=" * 60)
+    print("⚠️  Assure-toi que :")
+    print("   1. La mire de calibration ZIVID est bien visible")
+    print("   2. L'éclairage est uniforme")
+    print("   3. La zone de travail est dégagée")
+    input("   Appuie sur Entrée pour démarrer...\n")
+
     app = zivid.Application()
     camera = app.connect_camera()
+    print(f"✅ Caméra : {camera.info.model_name}")
     
     # Connexion au UR16e
     rtde_r = rtde_receive.RTDEReceiveInterface(ROBOT_IP)
     rtde_c = rtde_control.RTDEControlInterface(ROBOT_IP)
-
+    print(f"✅ Robot connecté : {ROBOT_IP}")
+    #paramètres de capture Zivid (ex: temps d'exposition, gain, etc.) - à ajuster si nécessaire pour la calibration
+    settings = zivid.Settings(
+        acquisitions=[zivid.Settings.Acquisition()],
+        color=zivid.Settings2D(acquisitions=[zivid.Settings2D.Acquisition()]),
+         )
     # 1. Définir des poses variées (X, Y, Z, rx, ry, rz)
     # TRÈS IMPORTANT : Vérifie que ces poses sont sécurisées pour le setup avant !
    
@@ -63,10 +79,18 @@ def run_calibration():
     ]
 
     detection_results = []
+    total_poses = len(calibration_poses)
 
     for i, pose in enumerate(calibration_poses):
-        print(f"Déplacement vers pose {i+1}...")
-        rtde_c.moveL(pose, 0.1, 0.1) # Vitesse lente par sécurité
+        print(f"Déplacement vers pose {i+1}/{total_poses}...")
+        #rtde_c.moveL(pose, 0.1, 0.1) # Vitesse lente par sécurité
+        #protection basique contre les erreurs de mouvement (ex: collision, limite de joint, etc.)
+        try:
+         rtde_c.moveL(pose, 0.1, 0.1)
+        except Exception as e:
+         print(f"❌ Erreur mouvement pose {i+1} : {e}")
+         rtde_c.stopScript()
+         return
         
         # Lire la pose réelle du TCP
         tcp_pose = rtde_r.getActualTCPPose()
@@ -77,7 +101,8 @@ def run_calibration():
         T_base_tcp[:3, :3] = Rotation.from_rotvec(tcp_pose[3:]).as_matrix()
         
         # Capturer l'image 3D
-        frame = camera.capture()
+       
+        frame = camera.capture_2d_3d(settings)
         detection = zivid.calibration.detect_feature_points(frame.point_cloud())
 
         if detection.valid():
@@ -86,10 +111,16 @@ def run_calibration():
                 detection
             )
             detection_results.append(hand_eye_input)
-            print("✅ Mire détectée !")
+            print(f"✅ Mire détectée ({len(detection_results)}/{total_poses})!")
         else:
             print("❌ Mire non détectée, ajuste l'éclairage ou la position.")
 
+    #verification du nombre de poses valides minimum pour la calibration (ex: au moins 8-10)
+    if len(detection_results) < 8:
+        print(f"❌ Calibration échouée : seulement {len(detection_results)} poses valides (minimum 8 recommandé).")
+        rtde_c.stopScript()
+        return
+    
     # 2. Calculer la calibration (Eye-in-Hand car caméra sur le robot)
     print("Calcul de la matrice de calibration...")
     result = zivid.calibration.calibrate_eye_in_hand(detection_results)
@@ -99,8 +130,12 @@ def run_calibration():
         # 3. SAUVEGARDE DU FICHIER
         np.save(CALIBRATION_FILE, T_tcp_cam)
         print(f"🏆 Calibration réussie ! Fichier sauvé dans : {CALIBRATION_FILE}")
+        print("Voici la matrice de transformation T_tcp_cam (caméra → TCP) :")
+        print(T_tcp_cam)
+        print(f"\n Erreur résiduelle de calibration : {result.reprojection_error():.4f} m (plus bas = mieux)")
     else:
         print("Fiasco : La calibration a échoué.")
-
+    #stop du script RTDE pour libérer le robot
+    rtde_c.stopScript()
 if __name__ == "__main__":
     run_calibration()
