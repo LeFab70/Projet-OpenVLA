@@ -24,6 +24,11 @@ assets/
 ~$*
 .DS_Store
 
-# Ignorer scripts de génération et de mise à jour automatique des rapports
+# Ignorer les scripts générés par l'assistant pour gérer les documents Word
+# (génération, mise à jour et reformatage automatiques des rapports)
 scripts/build_*
-scripts/update_report*
+scripts/update_*
+scripts/generate_*
+scripts/reformat_*
+scripts/*_report*
+scripts/*report*.py
