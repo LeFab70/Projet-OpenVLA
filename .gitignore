@@ -32,3 +32,8 @@ scripts/generate_*
 scripts/reformat_*
 scripts/*_report*
 scripts/*report*.py
+
+# IntershipReport : seul agenda_quotidien_Fabrice.docx est versionné
+IntershipReport/*
+!IntershipReport/
+!IntershipReport/*.docx
