@@ -13,4 +13,6 @@ pip install python-docx
 python IntershipReport/build_agenda_quotidien.py
 ```
 
-Structure par jour (identique aux rapports hebdomadaires) : objectif, réalisations, problèmes/solutions, livrables, prochaine étape.
+Organisation par **semaine** (objectif hebdo + jours 01–12). Par jour : objectif, réalisations techniques, prochaine étape (pas de sections livrables / problèmes).
+
+Le `.docx` reprend le **logo CCNB-INNOV** et l’**en-tête** du modèle `rapports_hebdomadaires/Semaine_01_14-15_mai_2026.docx` (styles Heading1, ListBullet).
