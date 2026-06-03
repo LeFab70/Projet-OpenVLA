@@ -336,7 +336,10 @@ Idée : refactoriser le démonstrateur en **modules indépendants** pour sécuri
 | `pipeline/` | Découpage : `config.py`, `calibration.py`, `zivid_capture.py`, `dino_detector.py`, `ur_controller.py`, `gripper.py`, `vla_controller.py` |
 | `pipeline/main_real.py` | Exécution robot réel (UR16e) |
 | `pipeline/main_sim.py` | Simulation / dry-run |
-| `pipeline/calibrer_robot.py` | Calibration main-œil UR16e + Zivid → sauvegarde `T_tcp_cam.npy` |
+| `pipeline/calibrer_eyes_in_hand.py` | Calibration main-œil UR16e + Zivid → `T_base_cam.npy` |
+| `pipeline/calibrer_hand_to_eyes.py` | Calibration manuelle eye-to-hand |
+| `pipeline/main_real_no_calibration.py` | Pipeline réel sans calibration |
+| `pipeline/debug.py` | Diagnostic RTDE / OpenVLA / workspace |
 
 ## Jour 11 — Rapport hebdomadaire + calibration main-œil (T_tcp_cam)
 
@@ -394,8 +397,76 @@ Lors des déplacements du pipeline (perception → OpenVLA → RTDE), ce module 
 | Rapport / module | Contenu |
 |------------------|---------|
 | `OpenVLA_day11_rapport_hebdomadaire.docx` | Rapport hebdomadaire (parties I–III calibration) |
+| `OpenVLA_day12_calibration_scripts.docx` | Jour 12 — scripts calibration et debug |
+| `OpenVLA_day13_tests_calib_robot.docx` | Jour 13 — tests calibration + DINO + OpenVLA + UR |
 | `OpenVLA_day01_stage_CCNB.docx` | Rapport final — section **II.6 Jour 11** |
 | `rapports_hebdomadaires/` | Dossier des rapports hebdomadaires (à compléter) |
-| `pipeline/calibrer_robot.py` | Calibration eye-in-hand → `T_tcp_cam.npy` |
+| `pipeline/calibrer_eyes_in_hand.py` | Calibration eye-in-hand (remplace `calibrer_robot.py`, jour 12) |
 | `pipeline/calibration.py` | Chargement + conversion à chaque exécution pipeline |
+
+## Jour 12 — Scripts calibration et debug pipeline
+
+**Date :** 2 juin 2026
+
+Refonte des outils de calibration et ajout de scripts de diagnostic avant les essais robot réels avec `T_base_cam.npy`.
+
+- **Calibration eye-in-hand** : `pipeline/calibrer_eyes_in_hand.py` (remplace `calibrer_robot.py`) — mire Zivid, `detect_feature_points`, `calibrate_eye_in_hand`, sauvegarde `T_base_cam.npy`.
+- **Calibration eye-to-hand manuelle** : `pipeline/calibrer_hand_to_eyes.py` — saisie X/Y/Z caméra vs base robot (sans mire).
+- **Test mire** : `scripts/integration/test/test_mire.py` — validation 3D/2D avant calibration.
+- **Pipeline sans calib** : `pipeline/main_real_no_calibration.py` — coords caméra DINO directes (runs `*_real_no_calib`).
+- **Debug RTDE** : `pipeline/debug.py` — diagnostic pose TCP, workspace, deltas OpenVLA, `moveL`.
+- **Config** : `CALIBRATION_FILE` → `T_base_cam.npy` ; `calibration.cam_to_robot()` : `P_base = T_base_cam @ P_cam`.
+- **Logs** : premières exécutions `outputs/pipeline_runs/20260602_*` (sim, real, real_no_calib).
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day12_calibration_scripts.docx` | Jour 12 — scripts calibration, debug, config T_base_cam |
+
+| Script | Rôle |
+|--------|------|
+| `pipeline/calibrer_eyes_in_hand.py` | Calibration automatique main-œil → `T_base_cam.npy` |
+| `pipeline/calibrer_hand_to_eyes.py` | Calibration manuelle eye-to-hand |
+| `scripts/integration/test/test_mire.py` | Test détection mire Zivid |
+| `pipeline/main_real_no_calibration.py` | Pipeline réel sans fichier calibration |
+| `pipeline/debug.py` | Diagnostic mouvements robot |
+
+```bash
+python -m pipeline.calibrer_eyes_in_hand
+python -m pipeline.calibrer_hand_to_eyes
+python scripts/integration/test/test_mire.py
+python -m pipeline.main_real_no_calibration
+python -m pipeline.debug
+```
+
+## Jour 13 — Tests calibration et mouvement robot (DINO + OpenVLA)
+
+**Date :** 3 juin 2026
+
+Essais sur cellule **UR16e** : calibration chargée, détection **Grounding DINO**, inférence **OpenVLA**, commandes **RTDE moveL**.
+
+### Tests calibration
+
+- Chargement `T_base_cam.npy` via `load_calibration()` dans `main_real.py` (sinon matrice défaut + `safe_mode`).
+- Conversion DINO : `(u,v)` + nuage Zivid → `point_cam_m` → base robot via `cam_to_robot()`.
+
+### Tests mouvement — Grounding DINO + OpenVLA
+
+- **main_real.py** : prompt « bouteille » ; DINO conf ~0.42–0.46, `pixel_uv` ≈ (1795, 1673), `point_cam_m` ≈ (0.10, 0.11, 0.70) m.
+- Boucle `MAX_STEPS=20` : réinférence DINO toutes les `DINO_EVERY_N_STEPS=5` ; prompt dynamique `remaining` (TCP→objet).
+- `predict_action` 7D × `SCALE=2` → `moveL` ; arrêt si `dist < 0.03 m` et `gripper < GRIPPER_THRESHOLD`.
+- **demoTest.py** : DINO « bottle » + consigne « pick up the bottle », boucle OpenVLA + RTDE (`DISTANCE_THRESHOLD` 5 cm).
+- **Logs** : `outputs/pipeline_runs/20260603_*` + `dino_pixels.jsonl`.
+
+| Rapport | Contenu |
+|---------|---------|
+| `OpenVLA_day13_tests_calib_robot.docx` | Jour 13 — tests calibration + DINO + OpenVLA + UR16e |
+| `OpenVLA_day01_stage_CCNB.docx` | Rapport final — sections **V.3 Jour 12**, **V.4 Jour 13** |
+
+| Script | Rôle |
+|--------|------|
+| `pipeline/main_real.py` | Pipeline calibré Zivid → DINO → OpenVLA → UR16e |
+| `scripts/integration/testUR_ZIVID/demoTest.py` | Boucle monolithique DINO + OpenVLA + RTDE |
+| `pipeline/calibration.py` | `load_calibration()`, `cam_to_robot()`, distance TCP–objet |
+
+**Observations :** détections DINO stables ; workspace actif ; prochaine étape : affiner `T_base_cam`, pince Robotiq, métriques de convergence.
 
