@@ -30,24 +30,32 @@ from .config import (
     TEXT_THRESHOLD,
     UNNORM_KEY,
     WORKSPACE,
+    T_TCP_CAM_DEFAULT 
 )
 from .dino_detector import DinoDetector
 from .ur_controller import Pose6, URController
 from .vla_controller import VLAController
-from .zivid_capture import init_camera, capture
+from .zivid_capture import init_camera, capture,save_capture
 
 
 def main() -> None:
     safe_mode = False
     if WORKSPACE is None:
         raise RuntimeError("WORKSPACE absent (dangereux).")
+    
+    try:
+        T_tcp_cam, is_real = calibration.load_calibration()
+    except Exception as e:
+        print(f"❌ Erreur lors du chargement de la calibration : {e}")
+        is_real = False
 
-    # 1&2&3: calibration main-œil absente = bug majeur en réel
-    T_tcp_cam, is_real = calibration.load_calibration()
     if not is_real:
-        raise RuntimeError(
-            "CALIBRATION ABSENTE: impossible d'utiliser caméra→robot de façon fiable en mode réel."
-        )
+        print("⚠️  CALIBRATION MAIN-ŒIL ABSENTE: la conversion caméra→robot sera très imprécise.")
+        T_tcp_cam = T_TCP_CAM_DEFAULT 
+        safe_mode = True
+        #raise RuntimeError(
+           # "CALIBRATION ABSENTE: impossible d'utiliser caméra→robot de façon fiable en mode réel."
+       # )
 
     run_dir = RUNS_DIR / datetime.now().strftime("%Y%m%d_%H%M%S_real")
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -75,7 +83,6 @@ def main() -> None:
         # Détection initiale
         image_rgb, pc_mm = capture(camera)
         #stockage image pour debug
-        from zivid_capture import save_capture
         save_capture(image_rgb, filename="dino_initial.png")
         det = dino.detect(image_rgb, pc_mm, text_prompt)
         if det is None:
@@ -96,7 +103,7 @@ def main() -> None:
             if step == 1 or (DINO_EVERY_N_STEPS > 0 and step % DINO_EVERY_N_STEPS == 0):
                 image_rgb, pc_mm = capture(camera)
                 # save image pour debug
-                from zivid_capture import save_capture
+              
                 save_capture(image_rgb,filename=f"dino_step{step:02d}.png")
                 det2 = dino.detect(image_rgb, pc_mm, text_prompt)
                 if det2 is not None:

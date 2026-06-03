@@ -35,15 +35,14 @@ def load_calibration() -> Tuple[np.ndarray, bool]:
     return T_TCP_CAM_DEFAULT.copy(), False
 
 
-def cam_to_robot(xyz_cam_m: np.ndarray, tcp_pose: list, T_tcp_cam: np.ndarray) -> np.ndarray:
-    """Caméra -> base robot via base->tcp puis tcp->cam.
-
-    - xyz_cam_m: (3,) en mètres dans le repère caméra
-    - tcp_pose: [x,y,z,rx,ry,rz] (UR axis-angle)
+def cam_to_robot(xyz_cam_m: np.ndarray, tcp_pose: list, T_base_cam: np.ndarray) -> np.ndarray:
+    """Caméra -> base robot (eye-to-hand direct).
+    
+    xyz_cam_m: (3,) en mètres dans le repère caméra
+    T_base_cam: matrice 4x4 de transformation caméra → base
     """
     P_cam = np.array([float(xyz_cam_m[0]), float(xyz_cam_m[1]), float(xyz_cam_m[2]), 1.0], dtype=np.float64)
-    T_base_tcp = _pose_to_matrix(tcp_pose)
-    P_base = T_base_tcp @ T_tcp_cam @ P_cam
+    P_base = T_base_cam @ P_cam
     return P_base[:3]
 
 # ici on calcule la distance entre TCP et objet, pour critère d'arrêt simple (dans la réalité, on brancherait la commande de la pince Robotiq ici pour fermer la pince lorsque proche de l'objet)
