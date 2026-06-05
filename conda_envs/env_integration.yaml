@@ -1,0 +1,15 @@
+# env_integration — Zivid + UR (sans OpenVLA)
+# Régénérer : conda_envs/export_all.ps1 sur Windows
+name: env_integration
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - cmake
+  - pip
+  - pip:
+      - zivid
+      - ur-rtde
+      - numpy
+      - opencv-python

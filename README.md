@@ -146,7 +146,7 @@ Note : section déplacée après Jour 09 — révisée le 27 mai 2026.
 | `env_zivid` | Caméra seule | `pip install zivid numpy opencv-python` |
 | `env_ur` | Robot seul | `pip install ur-rtde` |
 | `env_integration` | Zivid + UR | `pip install zivid ur-rtde numpy opencv-python` |
-| `env_openvla` | Inférence OpenVLA | Windows 11 Pro — voir `OpenVLA_day02_prise_en_main.docx` et `scripts/utils.txt` |
+| `env_openvla` | Inférence OpenVLA | Windows 11 Pro — voir `conda_envs/`, `OpenVLA_day02_prise_en_main.docx` et `scripts/utils.txt` |
 
 **Installation openvla-7b (Windows 11 Pro, Python 3.11)**
 

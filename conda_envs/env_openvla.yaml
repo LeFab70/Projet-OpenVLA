@@ -1,0 +1,24 @@
+# env_openvla — OpenVLA 7B + Zivid + UR + pipeline (Windows 11, CUDA)
+# Régénérer : conda_envs/export_all.ps1 (export complet recommandé)
+# PyTorch nightly cu128 : voir conda_envs/requirements_openvla_torch.txt si recréation manuelle
+name: env_openvla
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - cmake
+  - pip
+  - pip:
+      - numpy
+      - opencv-python
+      - scipy
+      - pillow
+      - ur-rtde
+      - zivid
+      - huggingface_hub
+      - accelerate
+      - transformers==4.40.1
+      - ultralytics
+      - open3d
+      - -r file:requirements_openvla_torch.txt

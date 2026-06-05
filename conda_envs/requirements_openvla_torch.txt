@@ -1,0 +1,7 @@
+# PyTorch nightly CUDA 12.8 — GPU NVIDIA récents (ex. RTX 5090 / Blackwell)
+# pip install -r conda_envs/requirements_openvla_torch.txt
+--pre
+--extra-index-url https://download.pytorch.org/whl/nightly/cu128
+torch
+torchvision
+torchaudio
