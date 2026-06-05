@@ -1,0 +1,5 @@
+﻿name: env_integration
+channels:
+  - defaults
+dependencies: []
+prefix: C:\Users\Etudiant\miniconda3\envs\env_integration
